@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"rootDir": "components",
+		"outDir": "_build/components",
+		"baseUrl": "components",
+		"module": "commonjs",
+		"target": "es5",
+		"newLine": "LF",
+		"jsx": "react",
+		"jsxFactory": "VNode.create",
+		"preserveConstEnums": true,
+		"experimentalDecorators": true,
+		"strictNullChecks": true
+	},
+	"exclude": [
+        "_*",
+        "@tpl"
+    ]
+}

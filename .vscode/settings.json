@@ -1,0 +1,17 @@
+{
+    "beautify.language": {
+        "js": [],
+        "css": [
+            "css",
+            "scss",
+            "less"
+        ],
+        "html": [
+            "htm",
+            "html"
+        ]
+    },
+    "beautify.config": ".vscode/.jsbeautifyrc",
+    "tslint.configFile": ".vscode/tslint.json",
+    "tslint.exclude": "**/*[tT]est.*"
+}

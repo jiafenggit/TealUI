@@ -1,0 +1,40 @@
+{
+	"version": "0.1.0",
+	"command": "digo",
+	"_runner": "terminal",
+	"isShellCommand": true,
+	"tasks": [
+		{
+			"taskName": "watch",
+			"args": [
+                "${file}"
+            ],
+			"isBackground": true
+        },
+		{
+			"taskName": "build",
+			"args": [
+                "${file}"
+            ],
+			"isBuildCommand": true,
+			"problemMatcher": {
+				"fileLocation": ["relative", "${workspaceRoot}"],
+				"pattern": {
+					"regexp": "^(error|warning) (\\d+): (?:\\[(.*?)\\])?(.*?)(?:\\((\\d+)(?:,(\\d+))?\\))?: (.*)$",
+					"severity": 1,
+					"code": 2,
+					"file": 4,
+					"line": 5,
+					"column": 6,
+					"message": 7
+				}
+			}
+        },
+		{
+			"taskName": "test",
+			"args": [
+                "${file}"
+            ]
+        }
+    ]
+}
