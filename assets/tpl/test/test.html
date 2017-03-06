@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>测试</title>
+	<link rel="stylesheet" href="__rootassets/doc/qunit.css">
+	<script src="__rootassets/doc/qunit.js"></script>
+</head>
+
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src="__fileNameNoExt.js"></script>
+	<script>
+		function registerQUnitTests(exports) {
+			for (var name in exports) {
+				var value = exports[name];
+				if (typeof value === "function") {
+					switch (name) {
+						case "before":
+							QUnit.moduleStart(value);
+							continue;
+						case "after":
+							QUnit.moduleDone(value);
+							continue;
+						case "beforeEach":
+							QUnit.testStart(value);
+							continue;
+						case "afterEach":
+							QUnit.testDone(value);
+							continue;
+					}
+					if (value.length) {
+						QUnit.test(name, function (assert) {
+							return this(assert.async());
+						}.bind(value));
+					} else {
+						QUnit.test(name, value);
+					}
+				} else {
+					QUnit.module(name);
+					registerQUnitTests(value);
+				}
+			}
+		}
+		registerQUnitTests(exports);
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,1248 @@
+/**
+ * @file 文档
+ * @author xuld <xuld@vip.qq.com>
+ */
+
+@primary-color-50: #e0f2f1;
+@primary-color-100: #b2dfdb;
+@primary-color-200: #80cbc4;
+@primary-color-300: #4db6ac;
+@primary-color-400: #26a69a;
+@primary-color-500: #009688;
+@primary-color-600: #00897b;
+@primary-color-700: #00796b;
+@primary-color-800: #00695c;
+@primary-color-900: #004d40;
+
+@accent-color: #CD7957;
+
+@text-color: #646b66;
+@text-color-dark: #4f5551;
+@text-color-light: #858886;
+
+@border-color: #dadada;
+
+@background-color: #fff;
+@background-color-header: #f7f7f7;
+
+@info-color: #1b809e;
+@warning-color: #a78342;
+@error-color: #b94a48;
+@code-color: #990000;
+
+@font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "Microsoft Yahei", "Hiragino Sans GB", sans-serif;
+@font-family-monospace: Monaco, Menlo, Consolas, "Courier New", "Helvetica Neue", Helvetica, "Microsoft Yahei", "Hiragino Sans GB", monospace;
+
+@font-size: 14px;
+@font-size-small: @font-size - 2px;
+
+@line-height: 1.5;
+@line-height-large: 1.75;
+@line-height-small: 1.25;
+
+@font-weight-normal: normal;
+@font-weight-bolder: 500;
+@font-weight-boldest: @font-weight-bolder + 100;
+@font-weight-bold: @font-weight-bolder - 100;
+
+@margin-y: @font-size;
+@margin-x: @font-size;
+@sidebar-width: @font-size * 14;
+
+@screen-small: ~"(max-width: 768px)";
+@screen-large: ~"(min-width: 1280px)";
+@screen-larger: ~"(min-width: 1600px)";
+
+@duration: .15s;
+@duration-slow: @duration + .15s;
+
+.doc {
+
+    body& {
+        margin: @margin-x / 2;
+    }
+
+    > h1, > h2, > h3, > h4, > h5, > h6, > p, > ul, > ol, > dl, > table, > blockquote, > section, > header, > footer, > nav, > aside, > article, > menu {
+        font-family: @font-family-sans-serif;
+        font-size: @font-size;
+        font-weight: @font-weight-normal;
+        line-height: @line-height;
+        color: @text-color;
+
+        a {
+            color: @primary-color-500;
+            text-decoration: none;
+
+            &:hover {
+                color: @primary-color-700;
+                text-decoration: underline;
+            }
+
+            &[target="_blank"][href^="http://"]:after, &[target="_blank"][href^="https://"]:after {
+                display: inline-block;
+                font-family: DocIcon;
+                content: "♐";
+                vertical-align: -2px;
+                margin-left: .32em;
+            }
+        }
+
+        small {
+            color: @text-color-light;
+            font-size: @font-size-small;
+            font-weight: @font-weight-normal;
+
+            a {
+                color: inherit;
+            }
+        }
+
+        code, kbd, samp {
+            &:extend(.doc > code);
+        }
+
+        kbd {
+            color: contrast(@text-color);
+            background-color: @text-color;
+            border-radius: 4px;
+        }
+
+        abbr[title] {
+            border-bottom: 1px dotted @border-color;
+        }
+    }
+
+    > h1, > h2, > h3, > h4, > h5, > h6 {
+        margin: 0 0 @margin-y / 2;
+        font-weight: @font-weight-bolder;
+        color: @text-color-dark;
+    }
+
+    > h1 {
+        font-size: @font-size + 18px;
+    }
+
+    > h2:target, > h3:target {
+        animation: doc-highlight 2.5s;
+    }
+
+    > h2:before, > h3:before, > dl dt:before, > dl dd:before {
+        color: @text-color-light;
+        font-weight: @font-weight-bold;
+    }
+
+    > h2 {
+        font-size: @font-size + 10px;
+        counter-increment: doc-h2;
+        counter-reset: doc-h3;
+
+        &:before {
+            content: counter(doc-h2) ". ";
+        }
+
+        &:only-of-type:before {
+            content: "";
+        }
+    }
+
+    > h3 {
+        font-size: @font-size + 6px;
+        counter-increment: doc-h3;
+
+        &:before {
+            content: counter(doc-h2) "." counter(doc-h3) " ";
+        }
+    }
+
+    > h4 {
+        font-size: @font-size + 2px;
+    }
+
+    > h5 {
+        font-size: @font-size;
+    }
+
+    > h6 {
+        font-size: @font-size - 2px;
+    }
+
+    > p, > ul, > ol, > dl, > table, > blockquote, > hr, > figure, > pre, > img, > textarea {
+        display: block;
+        margin: 0 0 @margin-y;
+    }
+
+    > p {
+        line-height: @line-height-large;
+    }
+
+    > dl {
+        > dt {
+            font-weight: @font-weight-boldest;
+        }
+
+        > dd {
+            margin: 0;
+
+            ~ dt {
+                margin: @margin-y / 2 0 0;
+            }
+        }
+    }
+
+    > table {
+        display: table;
+        border: 1px solid @border-color;
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: show;
+
+        th, td {
+            border: 1px solid @border-color;
+            padding: @margin-x / 2;
+            vertical-align: top;
+        }
+
+        thead, th, tr:hover {
+            background-color: @background-color-header;
+        }
+
+        th {
+            color: @text-color-dark;
+            font-weight: @font-weight-bold;
+            padding: @margin-x / 3 @margin-x / 2;
+            text-align: left;
+        }
+    }
+
+    > blockquote {
+        background-color: @background-color-header;
+        border: 1px solid @border-color;
+        padding: @margin-x / 2 @margin-x;
+        position: relative;
+        word-break: break-word;
+
+        &:after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            left: -1px;
+            top: -1px;
+            bottom: -1px;
+            background-color: @primary-color-500;
+        }
+
+        > h5 {
+            &:extend(.doc > h5);
+            margin: 0;
+            color: @primary-color-500;
+
+            &:before {
+                font-family: DocIcon;
+                font-size: @font-size-small;
+            }
+        }
+
+        .state(@state, @char) {
+            &.doc-@{state} {
+                &:after {
+                    background-color: ~"@{@{state}-color}";
+                }
+
+                h5 {
+                    color: ~"@{@{state}-color}";
+
+                    &:before {
+                        content: '@{char} ';
+                    }
+                }
+            }
+        }
+
+        .state(info, 'ⓘ');
+        .state(warning, '⚠');
+        .state(error, '❗');
+    }
+
+    > hr {
+        border-color: @border-color;
+        border-width: 1px 0 0 0;
+        border-style: solid;
+        height: 0;
+    }
+
+    > pre, > code {
+        font-family: @font-family-monospace;
+        color: @code-color;
+        background-color: @background-color-header;
+        padding: 2px 4px;
+    }
+
+    > pre {
+        border: 1px solid @border-color;
+        white-space: pre-wrap;
+        word-break: break-all;
+        line-height: @line-height;
+        font-size: @font-size - 1px;
+        color: @text-color;
+        padding: @font-size / 2;
+        max-height: 21em;
+        overflow-y: auto;
+        position: relative;
+
+        > code {
+            font: inherit;
+            display: block;
+            padding: 0;
+            outline: 0;
+        }
+    }
+
+    > table, > img, > textarea, > input, > button {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    > textarea {
+        width: 100%;
+        height: 7em;
+        resize: vertical;
+        border-color: @border-color;
+    }
+
+    ::selection {
+        background: @primary-color-300;
+        color: contrast(@primary-color-300);
+    }
+}
+
+@keyframes doc-highlight {
+    from {
+        background: #fff9ca;
+    }
+
+    to {
+        background: @background-color;
+    }
+}
+
+.doc-clear {
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+}
+
+.doc-left {
+    float: left !important;
+}
+
+.doc-right {
+    float: right !important;
+}
+
+.doc-table-fixed {
+    table-layout: fixed;
+    width: 100%;
+
+    * {
+        word-break: break-word;
+    }
+}
+
+.doc-scrollable-horizional {
+    overflow-x: auto;
+}
+
+.doc-hide-scrollbar {
+    overflow-y: hidden;
+
+    &:hover {
+        overflow-y: auto;
+        // Chrome 需要此属性导致重绘
+        padding-right: .1px;
+    }
+}
+
+.doc-row {
+    margin: 0 -@margin-x / 2;
+    overflow: hidden;
+}
+
+.doc-col {
+    float: left;
+    box-sizing: border-box;
+    padding: 0 @margin-x / 2;
+    margin-bottom: @margin-y;
+    min-height: 1px;
+
+    .doc-row-1 > & {
+        width: 100% / 1;
+    }
+
+    .doc-row-2 > & {
+        width: 100% / 2;
+    }
+
+    .doc-row-3 > & {
+        width: 100% / 3;
+    }
+
+    .doc-row-4 > & {
+        width: 100% / 4;
+    }
+
+    .doc-row-5 > & {
+        width: 100% / 5;
+    }
+
+    .doc-row-6 > & {
+        width: 100% / 6;
+    }
+
+    @media @screen-small {
+        float: none;
+        width: 100% !important;
+    }
+}
+
+@font-face {
+    font-family: DocIcon;
+    src: url('fonts/docicon.ttf?__inline') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.doc-icon {
+    font-family: DocIcon;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: -1px;
+    user-select: none;
+
+    a&:hover {
+        text-decoration: none !important;
+    }
+
+    a &:first-child {
+        margin-right: .32em;
+    }
+}
+
+.doc-tag {
+    display: inline-table;
+    background: @primary-color-50;
+    color: @primary-color-500;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: @font-size-small;
+
+    &:hover {
+        background: darken(@primary-color-50, 7%);
+        text-decoration: none !important;
+    }
+
+    ~ .doc-tag {
+        margin-left: 1em;
+    }
+}
+
+.doc-bookmark {
+    font-size: @font-size;
+    display: inline-block;
+    vertical-align: middle;
+    color: @text-color-light !important;
+    opacity: 0;
+
+    h2:hover &, h3:hover & {
+        opacity: 1;
+        transition: opacity @duration;
+    }
+}
+
+.doc-toolbar {
+    margin: 0;
+    padding: 0;
+    font-size: @font-size-small !important;
+    line-height: 1;
+
+    a {
+        color: @text-color-light !important;
+
+        ~ a {
+            margin-left: 1em;
+        }
+    }
+}
+
+.doc-code {
+
+    .doc-toolbar {
+        background: @background-color-header;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        a {
+            display: inline-block;
+            padding: 6px;
+            border: 1px solid @border-color;
+            border-width: 0 0 1px 1px;
+            width: @font-size;
+            text-align: center;
+            text-decoration: none;
+            margin: 0 !important;
+
+            &:hover {
+                background-color: @primary-color-500;
+                color: contrast(@primary-color-500) !important;
+                text-decoration: none;
+            }
+        }
+    }
+
+    &:hover .doc-toolbar, .doc-example:hover + & .doc-toolbar {
+        opacity: .95;
+        transition: opacity @duration;
+    }
+
+    &-literal {
+        color: #195f91;
+    }
+
+    &-comment, &-punctuation, &-leftbracket, &-rightbracket {
+        color: #93a1a1;
+    }
+
+    &-function {
+        color: #e44d54;
+    }
+
+    &-string, &-attrvalue {
+        color: #d44950;
+    }
+
+    &-keyword, &-tag {
+        color: #2f6f9f;
+    }
+
+    &-type, &-attrname, &-declaration, &-var {
+        color: teal;
+    }
+
+    &-plain {
+        color: @text-color;
+    }
+}
+
+.doc-example {
+    padding: @margin-x;
+    border: 1px solid @border-color;
+    position: relative;
+    margin-bottom: @margin-y;
+
+    &:before {
+        &:extend(.doc > section);
+        content: "实例";
+        color: rgba(94, 94, 94, .5) !important;
+        font-size: @font-size - 4px !important;
+        line-height: 1 !important;
+        position: absolute;
+        top: @margin-x / 2;
+        right: @margin-x / 2;
+        cursor: default;
+    }
+
+    + .doc-code {
+        margin-top: -@margin-y - 1px !important;
+    }
+}
+
+.doc-api {
+    width: 100%;
+
+    .doc > code {
+        background: none;
+        padding: 0;
+    }
+
+    p:last-of-type, pre:last-of-type {
+        margin: 0;
+    }
+
+    .doc-toolbar {
+        opacity: 0;
+    }
+
+    tr:hover .doc-toolbar {
+        opacity: 1;
+        transition: opacity @duration;
+    }
+
+    @media @screen-small {
+        th, .doc-toolbar {
+            display: none;
+        }
+
+        &, & > tbody, & > thead, & > tfoot, & > tbody > tr, & > tbody > tr > td {
+            display: block;
+            border: 0 !important;
+        }
+
+            & > tbody > tr > td {
+                padding: @margin-x / 2 0 !important;
+
+                &:first-child {
+                    width: auto;
+                    display: inline-block;
+
+                    &:after {
+                        content: ':';
+                    }
+
+                    & + td {
+                        display: inline-block;
+                    }
+                }
+
+                &:last-child {
+                    padding-top: 0 !important;
+                }
+            }
+    }
+}
+
+.doc-box {
+    &:extend(.doc > section);
+    display: inline-block;
+    vertical-align: middle;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    margin: @margin-y;
+    text-align: center;
+    background-color: @accent-color;
+    color: contrast(@accent-color);
+    overflow: hidden;
+
+    &-large {
+        height: 200px;
+        width: 200px;
+        line-height: 200px;
+    }
+
+    &-small {
+        height: 50px;
+        width: 50px;
+        line-height: 50px;
+    }
+
+    &-red {
+        background-color: #d85c5c;
+    }
+
+    &-yellow {
+        background-color: #f9c267;
+    }
+
+    &-blue {
+        background-color: #8ac8d5;
+    }
+
+    &-green {
+        background-color: #9bbb89;
+    }
+}
+
+.doc-list {
+    margin: 0;
+    padding: 0;
+
+    li {
+        list-style: none;
+        box-sizing: border-box;
+        width: 25%;
+        padding-right: @margin-x / 2;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        text-indent: 0;
+        float: left;
+
+        &:before {
+            content: "•";
+            color: @border-color;
+            padding-right: 7px;
+        }
+    }
+
+    input[type=checkbox] {
+        vertical-align: -2px;
+    }
+}
+
+#doc_progress {
+    position: fixed;
+    // 解决 Chrome fixed 抖动问题
+    -webkit-transform: translateZ(0);
+    width: 0;
+    height: 1.5px;
+    background-color: @primary-color-300;
+    opacity: 0.75;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+body.doc-page {
+    // 统一浏览器默认背景色。
+    background-color: @background-color;
+    margin: 0 @margin-x 0 @margin-x + @sidebar-width + @margin-x + @margin-x;
+    padding: 0;
+
+    .doc-container {
+        margin: 0 -@margin-x 0 -(@margin-x + @sidebar-width + @margin-x + @margin-x);
+        padding: 0 @margin-x;
+    }
+
+    .padding(@screen, @padding-size) {
+        @media @screen {
+            margin: 0 @padding-size + @margin-x 0 @sidebar-width + @margin-x + @margin-x + @padding-size;
+
+            .doc-container {
+                margin: 0 -(@padding-size + @margin-x) 0 -(@sidebar-width + @margin-x + @margin-x + @padding-size);
+                padding: 0 @padding-size;
+            }
+
+            #doc_sidebar {
+                left: @padding-size;
+            }
+        }
+    }
+
+    .padding(@screen-large, 160px);
+    .padding(@screen-larger, 320px);
+
+    @media @screen-small {
+        margin: 0 @margin-x;
+
+        .doc-container {
+            margin: 0 -@margin-x;
+        }
+
+        #doc_sidebar {
+            position: fixed;
+            left: -100%;
+            z-index: 10002;
+            width: 61.8%;
+        }
+
+        #doc_sidebar_filter {
+            padding: 0;
+        }
+
+        .doc-sidebar-actived {
+            padding-left: 1px;
+            left: 0 !important;
+        }
+
+        .doc-sidebar-actived, .doc-sidebar-inactived {
+            transition: left @duration-slow ease-out;
+        }
+
+        #doc_mask {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity @duration-slow ease-out;
+        }
+
+        .doc-sidebar-actived + #doc_mask {
+            background: #000;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            opacity: .15;
+        }
+    }
+}
+
+#doc_topbar {
+    background-color: @primary-color-700;
+
+    a {
+        color: @primary-color-50;
+        display: block;
+        padding: 9px 10px;
+        text-decoration: none;
+    }
+
+        a:hover, .doc-actived a {
+            background-color: @primary-color-900;
+            color: contrast(@primary-color-900);
+        }
+}
+
+#doc_logo, #doc_navbar li {
+    float: left;
+}
+
+#doc_logo {
+    font-weight: @font-weight-boldest;
+    background: url('images/logo.png?__inline') no-repeat 0 40% !important;
+    padding-left: 26px !important;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    small {
+        color: inherit;
+        position: relative;
+        top: -.5em;
+    }
+}
+
+#doc_navbar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#doc_search {
+    position: relative;
+    margin: 4px 0 0;
+
+    input, button {
+        padding: 1px 10px;
+        font: inherit;
+        outline: 0;
+        border-radius: 4px;
+        height: 25px;
+        -webkit-appearance: button;
+    }
+
+    input {
+        padding-right: 30px;
+        border: 1px solid @border-color;
+        width: 200px;
+        background: @background-color-header;
+
+        &::input-placeholder {
+            color: @text-color-light;
+        }
+
+        :focus {
+            background-color: @background-color;
+        }
+    }
+
+    button {
+        background: none;
+        position: absolute;
+        right: 1px;
+        top: 1px;
+        border: 0;
+        width: 30px;
+        color: @text-color-light;
+
+        &:active {
+            color: darken(@text-color-light, 20%);
+        }
+    }
+
+    &_suggest {
+        width: 240px;
+        max-height: 300px;
+        position: absolute;
+        right: 0;
+        z-index: 10;
+        border: 1px solid @border-color;
+        box-shadow: 1px 1px 2px #ccc;
+        border-radius: 4px;
+
+        li:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+
+        li:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+
+        a {
+            line-height: @line-height-small;
+            padding: 7px 10px;
+
+            small {
+                margin: 0;
+
+                &:last-child {
+                    color: lighten(@text-color-light, 20%);
+                }
+            }
+        }
+    }
+}
+
+#doc_menu {
+    display: none;
+
+    @media @screen-small {
+        display: block;
+        margin: 0 -@margin-x 0 0;
+
+        button {
+            -webkit-appearance: button;
+            border: 0;
+            background: none;
+            width: 40px;
+            color: #fff;
+            padding: 0;
+            height: 38px;
+            cursor: pointer;
+            outline: 0;
+            font-size: 18px;
+            line-height: 38px;
+            border-radius: 0;
+        }
+
+            button:active, .doc-menu-actived {
+                background-color: @primary-color-900;
+            }
+    }
+}
+
+#doc_header {
+    background-color: @primary-color-500;
+    background-image: linear-gradient(@primary-color-600, @primary-color-500);
+    color: #f9f9f9;
+    padding-bottom: @margin-y * 2.5;
+    margin-bottom: @margin-y;
+
+    h1 {
+        color: inherit;
+        font-size: @font-size + 28px;
+        margin: 0;
+        padding: @margin-y 0;
+    }
+
+    p {
+        color: @primary-color-50;
+        font-size: @font-size + 2px;
+        margin: 0;
+    }
+}
+
+#doc_title {
+    border-bottom: 1px solid @border-color;
+}
+
+.doc-tree {
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+
+    &, ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow: hidden;
+    }
+
+    .doc-icon {
+        -moz-transition: -moz-transform .3s;
+        -o-transition: -o-transform .3s;
+        -webkit-transition: -webkit-transform .3s;
+        transition: transform .3s;
+    }
+
+    &-collapsed {
+        .doc-icon {
+            -moz-transform: rotate(-90deg);
+            -ms-transform: rotate(-90deg);
+            -o-transform: rotate(-90deg);
+            -webkit-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+        }
+    }
+
+    a {
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        text-decoration: none;
+        color: #626262 !important;
+        line-height: 240%;
+        font-size: 13.5px;
+        padding-left: .18em;
+    }
+
+        a:hover, &-actived a {
+            background-color: #E8E8E8 !important;
+            text-decoration: none;
+        }
+
+    ul {
+        -moz-transition: height .3s;
+        -o-transition: height .3s;
+        -webkit-transition: height .3s;
+        transition: height .3s;
+        @indent-width: 1.32em;
+
+        a {
+            padding-left: @indent-width * 1;
+        }
+
+        ul {
+            a {
+                padding-left: @indent-width * 2;
+            }
+
+            ul {
+                a {
+                    padding-left: @indent-width * 3;
+                }
+
+                ul {
+                    a {
+                        padding-left: @indent-width * 4;
+                    }
+
+                    ul {
+                        a {
+                            padding-left: @indent-width * 5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    small {
+        margin-left: .65em;
+    }
+
+    &-doing a, &-todo a {
+        color: #AAA !important;
+        font-style: italic;
+    }
+}
+
+#doc_sidebar {
+    position: absolute;
+    left: @margin-x;
+    width: @sidebar-width;
+    padding-right: @margin-x;
+    border-right: 1px solid @border-color;
+    -webkit-transform: translateZ(0); // 解决 Chrome fixed 抖动问题
+    background: #fff;
+
+    a {
+        text-decoration: none;
+    }
+
+    &_filter {
+        padding-bottom: .3em;
+
+        &:before {
+            content: '搜';
+            position: absolute;
+            line-height: 30px;
+            font-family: DocIcon;
+            font-size: @font-size - 2;
+            color: #727272;
+            padding-left: 3px;
+        }
+
+        input {
+            width: 100%;
+            line-height: 150%;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 4px 4px 4px 20px;
+            font: inherit;
+            border: 0;
+            border-bottom: 1px solid @border-color;
+            background: none;
+            outline: 0;
+            -webkit-appearance: none;
+            border-radius: 0;
+
+            &:hover, &:focus {
+                border-bottom-color: @primary-color-500;
+            }
+        }
+    }
+}
+
+#doc_index {
+    background: @background-color-header;
+    border-top: 1px solid #EEE;
+    border-bottom: 1px solid #EEE;
+    margin-bottom: @margin-y;
+
+    h2 {
+        background: @primary-color-400;
+        color: contrast( @primary-color-400);
+        float: left;
+        font-weight: 500;
+        font-size: @font-size + 2px;
+        margin: @margin-y / 2 0 @margin-y / 2 @margin-x;
+        padding: 4px 7px;
+    }
+
+    dl {
+        background: #fff;
+        margin: 0 0 0 45px + @margin-x;
+        padding: @margin-y / 2 @margin-x;
+        border-left: 1px solid #EEE;
+    }
+
+    dt {
+        counter-increment: doc-dt;
+        counter-reset: doc-dd;
+        font-weight: @font-weight-bolder;
+        margin: 0;
+
+        &:before {
+            content: counter(doc-dt) ". ";
+        }
+
+        &:only-of-type:before {
+            display: none;
+        }
+    }
+
+    dd {
+        padding-left: 2em;
+        margin: 0;
+        counter-increment: doc-dd;
+
+        &:before {
+            content: counter(doc-dt) "." counter(doc-dd) " ";
+            font-size: @font-size - 1px;
+        }
+    }
+
+        dd a {
+            color: @text-color;
+            font-size: @font-size - 1px;
+        }
+}
+
+#doc_summary {
+    border: 1px solid #EEE;
+    background-color: @background-color-header;
+    padding: @margin-x / 2 @margin-x;
+}
+
+.doc-pager {
+    position: fixed;
+    -webkit-transform: translateZ(0);
+    /* 解决 Chrome fixed 抖动问题 */
+    right: 10px;
+    bottom: 28px;
+    text-align: center;
+    z-index: 10;
+    border-radius: 4px;
+    display: block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #000;
+    color: #ffffff;
+    -moz-transition: opacity .3s;
+    -o-transition: opacity .3s;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+    text-decoration: none;
+    opacity: .5;
+
+    :hover {
+        opacity: .75;
+        color: #fff;
+    }
+
+    span {
+        margin: 0;
+    }
+
+    &-hide {
+        opacity: 0 !important;
+        right: -50px !important;
+    }
+}
+
+#doc_pager_left {
+    right: 56px;
+}
+
+#doc_pager_up {
+    bottom: 74px;
+}
+
+#doc_footer {
+    border-top: 1px solid @border-color;
+    font-size: small;
+    margin-top: 2em;
+    padding-top: 14px;
+    padding-bottom: 42px;
+
+    div {
+        float: right;
+    }
+
+    a {
+        padding: 0 .5em;
+    }
+
+    &, & a {
+        color: #b8b8b8;
+    }
+}
+
+@media @screen-small {
+
+    // 菜单
+    #doc_search, #doc_module_toolbar, &-toolbar a:last-child {
+        display: none;
+    }
+
+    #doc_navbar {
+        margin: 0 -@margin-x;
+        height: 0;
+        clear: both;
+        overflow: hidden;
+        -moz-transition: height .3s ease-out;
+        -o-transition: height .3s ease-out;
+        -webkit-transition: height .3s ease-out;
+        transition: height .3s ease-out;
+    }
+
+        #doc_navbar li {
+            float: none;
+        }
+
+    // 侧边栏
+    #doc_footer {
+        text-align: center;
+
+        div {
+            float: none;
+        }
+    }
+}

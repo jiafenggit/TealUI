@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
+	<title>组件文档详情页</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="../doc.less">
+</head>
+
+<body class="doc">
+	<div id="doc_progress" style="width: 50%;"></div>
+	<menu id="doc_module_toolbar" class="doc-toolbar doc-right">
+		<a href="###"><i class="doc-icon">⭳</i>下载</a>
+		<a href="###"><i class="doc-icon">✰</i>收藏</a>
+		<a href="###"><i class="doc-icon">▹</i>测试</a>
+		<a href="###"><i class="doc-icon">✥</i>全屏</a>
+		<a href="###"><i class="doc-icon">✠</i>恢复</a>
+	</menu>
+	<h1 id="doc_title">组件名 <small><a href="###">a/b/c</a></small> <a class="doc-tag">IE6</a><a class="doc-tag">Touch</a></h1>
+	<p id="doc_summary">定义全局 CSS 样式。</p>
+	<nav id="doc_index">
+		<h2>目录</h2>
+		<dl>
+			<dt><a href="#标题2">标题2</a></dt>
+			<dd><a href="#标题3">标题3</a></dd>
+			<dt><a href="#标题2">标题2</a></dt>
+		</dl>
+	</nav>
+	<h2 id="标题2">标题2 <small>(说明)</small> <a href="#标题2" class=" doc-bookmark doc-icon">☍</a></h2>
+	<h3 id="标题3">标题3 <small>(说明)</small> <a href="#标题3" class=" doc-bookmark doc-icon">☍</a></h3>
+	<h2>标题2 <small>(说明)</small></h2>
+	<p>段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落</p>
+	<h3>标题3 <small>(说明)</small></h3>
+	<h4>标题4 <small>(说明)</small></h4>
+	<h5>标题5 <small>(说明)</small></h5>
+	<h6>标题6 <small>(说明)</small></h6>
+	<ul>
+		<li>列表1</li>
+		<li>列表2</li>
+		<li>
+			列表3
+			<ul>
+				<li>列表1</li>
+				<li>列表2</li>
+				<li>列表3</li>
+			</ul>
+		</li>
+	</ul>
+	<ol>
+		<li>列表1</li>
+		<li>列表2</li>
+		<li>列表3</li>
+	</ol>
+	<dl>
+		<dt>标题1</dt>
+		<dd>项1</dd>
+		<dd>项2</dd>
+		<dt>标题2</dt>
+		<dd>项3</dd>
+		<dd>项4</dd>
+	</dl>
+	<table>
+		<tr>
+			<th>列1</th>
+			<th>列2</th>
+			<th>列3</th>
+		</tr>
+		<tr>
+			<td>行1-1</td>
+			<td>行1-2</td>
+			<td>行1-3</td>
+		</tr>
+		<tr>
+			<td>行2-1</td>
+			<td>行2-2</td>
+			<td>
+				<p>行2-3</p>
+			</td>
+		</tr>
+	</table>
+	<hr>
+	<blockquote>
+		<h5>注意</h5> 文字
+	</blockquote>
+	<blockquote class="doc-info">
+		<h5>注意</h5> 文字
+	</blockquote>
+	<blockquote class="doc-warning">
+		<h5>注意</h5> 文字
+	</blockquote>
+	<blockquote class="doc-error">
+		<h5>注意</h5> 文字
+	</blockquote>
+	<textarea></textarea>
+	<img src="../../resources/200x200.png">
+	<div class="doc-row doc-row-2">
+		<div class="doc-col doc">
+			A
+		</div>
+		<div class="doc-col doc">
+			B
+		</div>
+	</div>
+	<div class="doc-row doc-row-2">
+		<div class="doc-col doc">
+			C
+		</div>
+		<div class="doc-col doc">
+			D
+		</div>
+	</div>
+	<figure class="doc-example">
+		组件示例
+	</figure>
+	<pre class="doc-code"><menu class="doc-toolbar"><a title="执行本代码" href="javascript://执行本代码" class="doc-icon">▶</a><a title="编辑本代码" href="javascript://编辑本代码" class="doc-icon">✍</a><a title="全选并复制本源码" href="javascript://全选并复制本源码" class="doc-icon">❐</a></menu><code class="doc-lang-html" contenteditable="true" spellcheck="false"><span class="doc-code-tag">&lt;a</span><span class="doc-code-plain"> </span><span class="doc-code-attrname">href</span><span class="doc-code-punctuation">=</span><span class="doc-code-attrvalue">"###"</span><span class="doc-code-plain"> </span><span class="doc-code-attrname">class</span><span class="doc-code-punctuation">=</span><span class="doc-code-attrvalue">"x-button"</span><span class="doc-code-tag">&gt;</span><span class="doc-code-plain">a 按钮</span><span class="doc-code-tag">&lt;/a&gt;</span></code></pre>
+	<p>文本 <code>Code</code> <kbd>Ctrl+D</kbd> <samp>实例</samp> <a href="###">链接</a> <a href="http://github.com/Teal/TealUI" target="_blank">外链</a> <abbr title="提示内容">提示</abbr></p>
+	<h2>API <small>(源码: <a href="###" target="_blank">utility/shim/html5.js</a>)</small></h2>
+	<table class="doc-api">
+		<tr>
+			<th>API</th>
+			<th>描述</th>
+			<th>示例</th>
+		</tr>
+		<tr>
+			<td class="doc">
+				<code>Object.assign</code>
+				<small><i title="HTML5 内置此 API" class="doc-icon">5</i></small>
+				<menu class="doc-toolbar">
+					<a href="###" title="查看源码"><i class="doc-icon">﹤</i>源码</a>
+				</menu>
+			</td>
+			<td class="doc">
+				<p>复制所有成员。</p>
+				<menu class="doc-toolbar">
+					<a href="###"><i class="doc-icon">﹀</i>更多</a>
+				</menu>
+			</td>
+			<td class="doc">
+				<pre>Object.assign({}, {a: 1});</pre>
+			</td>
+		</tr>
+		<tr>
+			<td class="doc">
+				<code>Object.assign</code>
+				<small><i title="HTML5 内置此 API" class="doc-icon">5</i></small>
+				<menu class="doc-toolbar">
+					<a href="###" title="查看源码"><i class="doc-icon">/</i>源码</a>
+				</menu>
+			</td>
+			<td class="doc">
+				<p>复制所有成员。</p>
+				<menu class="doc-toolbar">
+					<a href="###"><i class="doc-icon">﹀</i>更多</a>
+				</menu>
+			</td>
+			<td class="doc">
+				<pre>Object.assign({}, {a: 1});</pre>
+			</td>
+		</tr>
+	</table>
+	<div class="doc-box">doc-box</div>
+	<div class="doc-box doc-box-large">doc-box</div>
+	<div class="doc-box doc-box-small">doc-box</div>
+	<div class="doc-box doc-box-red">doc-box</div>
+	<div class="doc-box doc-box-yellow">doc-box</div>
+	<div class="doc-box doc-box-green">doc-box</div>
+	<div class="doc-box doc-box-blue">doc-box</div>
+	<input type="button" value="按钮">
+	<button>按钮</button>
+</body>
+
+</html>

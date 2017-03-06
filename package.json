@@ -1,0 +1,22 @@
+{
+  "name": "tealui",
+  "version": "0.0.0",
+  "repository": "https://github.com/Teal/TealUI",
+  "description": "全力打造小而全、精而美的开源前端组件库",
+  "keywords": [
+    "html5",
+    "ui"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "xuld <xuld@vip.qq.com>",
+  "devDependencies": {
+    "digo": "latest",
+    "digo-less": "latest",
+    "digo-typescript": "latest",
+    "digo-web-pack": "latest",
+    "digo-marked": "latest"
+  },
+  "dependencies": {
+      "@types/qunit": "latest"
+  }
+}
