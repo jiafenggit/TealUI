@@ -12156,7 +12156,7 @@
         },
         {
           "id": 177,
-          "order": 5,
+          "order": 94,
           "prevSize": 14,
           "code": 8801,
           "name": "bars",
@@ -15628,7 +15628,8 @@
           ],
           "defaultCode": 61641,
           "grid": 14,
-          "matchesSearch": false
+          "matchesSearch": false,
+          "width": 877.7142857142858
         },
         {
           "id": 288,

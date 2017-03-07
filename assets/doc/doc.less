@@ -49,7 +49,7 @@
 @margin-x: @font-size;
 @sidebar-width: @font-size * 14;
 
-@screen-small: ~"(max-width: 768px)";
+@screen-small: ~"(max-width: 576px)";
 @screen-large: ~"(min-width: 1280px)";
 @screen-larger: ~"(min-width: 1600px)";
 
@@ -98,7 +98,10 @@
         }
 
         code, kbd, samp {
-            &:extend(.doc > code);
+            font-family: @font-family-monospace;
+            color: @code-color;
+            background-color: @background-color-header;
+            padding: 2px 4px;
         }
 
         kbd {
@@ -109,6 +112,7 @@
 
         abbr[title] {
             border-bottom: 1px dotted @border-color;
+            cursor: help;
         }
     }
 
@@ -271,10 +275,7 @@
     }
 
     > pre, > code {
-        font-family: @font-family-monospace;
-        color: @code-color;
-        background-color: @background-color-header;
-        padding: 2px 4px;
+        &:extend(.doc > section code);
     }
 
     > pre {
@@ -700,395 +701,6 @@
     z-index: 9999;
 }
 
-body.doc-page {
-    // 统一浏览器默认背景色。
-    background-color: @background-color;
-    margin: 0 @margin-x 0 @margin-x + @sidebar-width + @margin-x + @margin-x;
-    padding: 0;
-
-    .doc-container {
-        margin: 0 -@margin-x 0 -(@margin-x + @sidebar-width + @margin-x + @margin-x);
-        padding: 0 @margin-x;
-    }
-
-    .padding(@screen, @padding-size) {
-        @media @screen {
-            margin: 0 @padding-size + @margin-x 0 @sidebar-width + @margin-x + @margin-x + @padding-size;
-
-            .doc-container {
-                margin: 0 -(@padding-size + @margin-x) 0 -(@sidebar-width + @margin-x + @margin-x + @padding-size);
-                padding: 0 @padding-size;
-            }
-
-            #doc_sidebar {
-                left: @padding-size;
-            }
-        }
-    }
-
-    .padding(@screen-large, 160px);
-    .padding(@screen-larger, 320px);
-
-    @media @screen-small {
-        margin: 0 @margin-x;
-
-        .doc-container {
-            margin: 0 -@margin-x;
-        }
-
-        #doc_sidebar {
-            position: fixed;
-            left: -100%;
-            z-index: 10002;
-            width: 61.8%;
-        }
-
-        #doc_sidebar_filter {
-            padding: 0;
-        }
-
-        .doc-sidebar-actived {
-            padding-left: 1px;
-            left: 0 !important;
-        }
-
-        .doc-sidebar-actived, .doc-sidebar-inactived {
-            transition: left @duration-slow ease-out;
-        }
-
-        #doc_mask {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            z-index: 10001;
-            opacity: 0;
-            transition: opacity @duration-slow ease-out;
-        }
-
-        .doc-sidebar-actived + #doc_mask {
-            background: #000;
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            opacity: .15;
-        }
-    }
-}
-
-#doc_topbar {
-    background-color: @primary-color-700;
-
-    a {
-        color: @primary-color-50;
-        display: block;
-        padding: 9px 10px;
-        text-decoration: none;
-    }
-
-        a:hover, .doc-actived a {
-            background-color: @primary-color-900;
-            color: contrast(@primary-color-900);
-        }
-}
-
-#doc_logo, #doc_navbar li {
-    float: left;
-}
-
-#doc_logo {
-    font-weight: @font-weight-boldest;
-    background: url('images/logo.png?__inline') no-repeat 0 40% !important;
-    padding-left: 26px !important;
-
-    &:hover {
-        background-color: transparent;
-    }
-
-    small {
-        color: inherit;
-        position: relative;
-        top: -.5em;
-    }
-}
-
-#doc_navbar {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-#doc_search {
-    position: relative;
-    margin: 4px 0 0;
-
-    input, button {
-        padding: 1px 10px;
-        font: inherit;
-        outline: 0;
-        border-radius: 4px;
-        height: 25px;
-        -webkit-appearance: button;
-    }
-
-    input {
-        padding-right: 30px;
-        border: 1px solid @border-color;
-        width: 200px;
-        background: @background-color-header;
-
-        &::input-placeholder {
-            color: @text-color-light;
-        }
-
-        :focus {
-            background-color: @background-color;
-        }
-    }
-
-    button {
-        background: none;
-        position: absolute;
-        right: 1px;
-        top: 1px;
-        border: 0;
-        width: 30px;
-        color: @text-color-light;
-
-        &:active {
-            color: darken(@text-color-light, 20%);
-        }
-    }
-
-    &_suggest {
-        width: 240px;
-        max-height: 300px;
-        position: absolute;
-        right: 0;
-        z-index: 10;
-        border: 1px solid @border-color;
-        box-shadow: 1px 1px 2px #ccc;
-        border-radius: 4px;
-
-        li:first-child {
-            border-radius: 4px 0 0 4px;
-        }
-
-        li:last-child {
-            border-radius: 0 4px 4px 0;
-        }
-
-        a {
-            line-height: @line-height-small;
-            padding: 7px 10px;
-
-            small {
-                margin: 0;
-
-                &:last-child {
-                    color: lighten(@text-color-light, 20%);
-                }
-            }
-        }
-    }
-}
-
-#doc_menu {
-    display: none;
-
-    @media @screen-small {
-        display: block;
-        margin: 0 -@margin-x 0 0;
-
-        button {
-            -webkit-appearance: button;
-            border: 0;
-            background: none;
-            width: 40px;
-            color: #fff;
-            padding: 0;
-            height: 38px;
-            cursor: pointer;
-            outline: 0;
-            font-size: 18px;
-            line-height: 38px;
-            border-radius: 0;
-        }
-
-            button:active, .doc-menu-actived {
-                background-color: @primary-color-900;
-            }
-    }
-}
-
-#doc_header {
-    background-color: @primary-color-500;
-    background-image: linear-gradient(@primary-color-600, @primary-color-500);
-    color: #f9f9f9;
-    padding-bottom: @margin-y * 2.5;
-    margin-bottom: @margin-y;
-
-    h1 {
-        color: inherit;
-        font-size: @font-size + 28px;
-        margin: 0;
-        padding: @margin-y 0;
-    }
-
-    p {
-        color: @primary-color-50;
-        font-size: @font-size + 2px;
-        margin: 0;
-    }
-}
-
-#doc_title {
-    border-bottom: 1px solid @border-color;
-}
-
-.doc-tree {
-    background: #fff;
-    -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
-
-    &, ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        overflow: hidden;
-    }
-
-    .doc-icon {
-        -moz-transition: -moz-transform .3s;
-        -o-transition: -o-transform .3s;
-        -webkit-transition: -webkit-transform .3s;
-        transition: transform .3s;
-    }
-
-    &-collapsed {
-        .doc-icon {
-            -moz-transform: rotate(-90deg);
-            -ms-transform: rotate(-90deg);
-            -o-transform: rotate(-90deg);
-            -webkit-transform: rotate(-90deg);
-            transform: rotate(-90deg);
-        }
-    }
-
-    a {
-        display: block;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        text-decoration: none;
-        color: #626262 !important;
-        line-height: 240%;
-        font-size: 13.5px;
-        padding-left: .18em;
-    }
-
-        a:hover, &-actived a {
-            background-color: #E8E8E8 !important;
-            text-decoration: none;
-        }
-
-    ul {
-        -moz-transition: height .3s;
-        -o-transition: height .3s;
-        -webkit-transition: height .3s;
-        transition: height .3s;
-        @indent-width: 1.32em;
-
-        a {
-            padding-left: @indent-width * 1;
-        }
-
-        ul {
-            a {
-                padding-left: @indent-width * 2;
-            }
-
-            ul {
-                a {
-                    padding-left: @indent-width * 3;
-                }
-
-                ul {
-                    a {
-                        padding-left: @indent-width * 4;
-                    }
-
-                    ul {
-                        a {
-                            padding-left: @indent-width * 5;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    small {
-        margin-left: .65em;
-    }
-
-    &-doing a, &-todo a {
-        color: #AAA !important;
-        font-style: italic;
-    }
-}
-
-#doc_sidebar {
-    position: absolute;
-    left: @margin-x;
-    width: @sidebar-width;
-    padding-right: @margin-x;
-    border-right: 1px solid @border-color;
-    -webkit-transform: translateZ(0); // 解决 Chrome fixed 抖动问题
-    background: #fff;
-
-    a {
-        text-decoration: none;
-    }
-
-    &_filter {
-        padding-bottom: .3em;
-
-        &:before {
-            content: '搜';
-            position: absolute;
-            line-height: 30px;
-            font-family: DocIcon;
-            font-size: @font-size - 2;
-            color: #727272;
-            padding-left: 3px;
-        }
-
-        input {
-            width: 100%;
-            line-height: 150%;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-            padding: 4px 4px 4px 20px;
-            font: inherit;
-            border: 0;
-            border-bottom: 1px solid @border-color;
-            background: none;
-            outline: 0;
-            -webkit-appearance: none;
-            border-radius: 0;
-
-            &:hover, &:focus {
-                border-bottom-color: @primary-color-500;
-            }
-        }
-    }
-}
-
 #doc_index {
     background: @background-color-header;
     border-top: 1px solid #EEE;
@@ -1145,35 +757,426 @@ body.doc-page {
 }
 
 #doc_summary {
-    border: 1px solid #EEE;
+    border: 1px solid #eee;
     background-color: @background-color-header;
     padding: @margin-x / 2 @margin-x;
 }
 
+body.doc-page {
+    background-color: @background-color;
+    margin: 0 @margin-x 0 @margin-x + @sidebar-width + @margin-x + @margin-x;
+    padding: 0;
+
+    .doc-container {
+        margin: 0 -@margin-x 0 -(@margin-x + @sidebar-width + @margin-x + @margin-x);
+        padding: 0 @margin-x;
+    }
+
+    .media(@screen, @padding-size) {
+        @media @screen {
+            margin: 0 @padding-size + @margin-x 0 @sidebar-width + @margin-x + @margin-x + @padding-size;
+
+            .doc-container {
+                margin: 0 -(@padding-size + @margin-x) 0 -(@sidebar-width + @margin-x + @margin-x + @padding-size);
+                padding: 0 @padding-size;
+            }
+
+            #doc_sidebar {
+                left: @padding-size;
+            }
+        }
+    }
+
+    .media(@screen-large, 160px);
+    .media(@screen-larger, 320px);
+
+    @media @screen-small {
+        margin: 0 @margin-x;
+
+        .doc-container {
+            margin: 0 -@margin-x;
+        }
+
+        .doc-sidebar-actived {
+            padding-left: 1px;
+            left: 0 !important;
+        }
+
+        .doc-sidebar-actived, .doc-sidebar-inactived {
+            transition: left @duration-slow ease-out;
+        }
+
+        #doc_mask {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity @duration-slow ease-out;
+        }
+
+        .doc-sidebar-actived + #doc_mask {
+            background: #000;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            opacity: .15;
+        }
+    }
+}
+
+#doc_topbar {
+    background-color: @primary-color-700;
+
+    a {
+        color: @primary-color-50;
+        display: block;
+        padding: 8px 10px;
+        text-decoration: none;
+    }
+
+        a:hover, .doc-actived a {
+            background-color: @primary-color-900;
+            color: contrast(@primary-color-900);
+        }
+}
+
+#doc_logo, #doc_navbar li {
+    float: left;
+}
+
+#doc_logo {
+    font-weight: @font-weight-boldest;
+    background: url('images/logo.png?__inline') no-repeat 0 40% !important;
+    padding-left: 26px !important;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    small {
+        color: inherit;
+        position: relative;
+        top: -.5em;
+    }
+}
+
+#doc_navbar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media @screen-small {
+        margin: 0 -@margin-x;
+        height: 0;
+        clear: both;
+        overflow: hidden;
+        transition: height @duration ease-out;
+
+        li {
+            float: none;
+        }
+    }
+}
+
+#doc_menu {
+    display: none;
+
+    @media @screen-small {
+        display: block;
+        margin: 0 -@margin-x 0 0;
+
+        button {
+            -webkit-appearance: button;
+            border: 0;
+            background: none;
+            width: 40px;
+            color: #fff;
+            padding: 0;
+            height: 36px;
+            cursor: pointer;
+            outline: 0;
+            font-size: 18px;
+            line-height: 36px;
+            border-radius: 0;
+        }
+
+            button:active, .doc-menu-actived {
+                background-color: @primary-color-900;
+            }
+    }
+}
+
+@media @screen-small {
+    #doc_search, #doc_module_toolbar {
+        display: none;
+    }
+}
+
+#doc_search {
+    position: relative;
+    margin: 4px 0 0;
+
+    input, button {
+        padding: 1px 10px;
+        font: inherit;
+        outline: 0;
+        border-radius: 4px;
+        height: 25px;
+        -webkit-appearance: button;
+    }
+
+    input {
+        padding-right: 30px;
+        border: 1px solid @border-color;
+        width: 160px;
+        background: @background-color-header;
+
+        &::input-placeholder {
+            color: @text-color-light;
+        }
+
+        &:focus {
+            background-color: @background-color;
+        }
+    }
+
+    button {
+        background: none;
+        position: absolute;
+        right: 1px;
+        top: 1px;
+        border: 0;
+        width: 30px;
+        color: @text-color-light;
+
+        &:active {
+            color: @text-color-dark;
+        }
+    }
+
+    &_suggest {
+        width: 200px;
+        max-height: @font-size * 20;
+        position: absolute;
+        right: 0;
+        z-index: 10;
+        border: 1px solid @border-color;
+        box-shadow: 1px 1px 2px #ccc;
+        border-radius: 4px;
+        overflow: auto;
+
+        li:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+
+        li:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+
+        a {
+            line-height: @line-height-small;
+            padding: 7px 10px;
+
+            small {
+                margin: 0;
+
+                &:last-child {
+                    color: lighten(@text-color-light, 20%);
+                }
+            }
+        }
+    }
+}
+
+#doc_header {
+    background-color: @primary-color-500;
+    background-image: linear-gradient(@primary-color-600, @primary-color-500);
+    color: #f9f9f9;
+    padding-bottom: @margin-y * 2.5;
+    margin-bottom: @margin-y;
+
+    h1 {
+        color: inherit;
+        font-size: @font-size + 28px;
+        margin: 0;
+        padding: @margin-y 0;
+    }
+
+    p {
+        color: @primary-color-50;
+        font-size: @font-size + 2px;
+        margin: 0;
+    }
+}
+
+#doc_title {
+    border-bottom: 1px solid @border-color;
+}
+
+#doc_sidebar {
+    position: absolute;
+    left: @margin-x;
+    width: @sidebar-width;
+    padding-right: @margin-x;
+    border-right: 1px solid @border-color;
+    -webkit-transform: translateZ(0); // 解决 Chrome fixed 抖动问题
+    a {
+        text-decoration: none;
+    }
+
+    &_filter {
+        padding-bottom: .3em;
+
+        &:before {
+            content: '搜';
+            position: absolute;
+            line-height: 30px;
+            font-family: DocIcon;
+            font-size: @font-size - 2;
+            color: @text-color-light;
+            padding-left: 3px;
+        }
+
+        input {
+            width: 100%;
+            line-height: 1.5;
+            box-sizing: border-box;
+            padding: 4px 4px 4px 20px;
+            font: inherit;
+            border: 0;
+            border-bottom: 1px solid @border-color;
+            background: none;
+            outline: 0;
+            -webkit-appearance: none;
+            border-radius: 0;
+
+            &:hover, &:focus {
+                border-bottom-color: @primary-color-500;
+            }
+        }
+    }
+
+    @media @screen-small {
+        position: fixed;
+        left: -100%;
+        z-index: 10002;
+        width: 61.8%;
+        padding-right: 0;
+    }
+}
+
+.doc-tree {
+    background: @background-color;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+
+    &, ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow: hidden;
+    }
+
+    .doc-icon {
+        transition: transform @duration;
+    }
+
+    &-collapsed {
+        .doc-icon {
+            transform: rotate(-90deg);
+        }
+    }
+
+    a {
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        text-decoration: none;
+        color: #626262 !important;
+        line-height: 240%;
+        font-size: 13.5px;
+        padding-left: .18em;
+    }
+
+        a:hover, &-actived a {
+            background-color: #E8E8E8 !important;
+            text-decoration: none;
+        }
+
+    ul {
+        transition: height .3s;
+        @indent-width: 1.32em;
+
+        a {
+            padding-left: @indent-width * 1;
+        }
+
+        ul {
+            a {
+                padding-left: @indent-width * 2;
+            }
+
+            ul {
+                a {
+                    padding-left: @indent-width * 3;
+                }
+
+                ul {
+                    a {
+                        padding-left: @indent-width * 4;
+                    }
+
+                    ul {
+                        a {
+                            padding-left: @indent-width * 5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    small {
+        margin-left: .65em;
+    }
+
+    mark {
+        background-color: yellow;
+    }
+
+    &-doing a, &-todo a {
+        color: #AAA !important;
+        font-style: italic;
+    }
+}
+
 .doc-pager {
     position: fixed;
+    // 解决 Chrome fixed 抖动问题
     -webkit-transform: translateZ(0);
-    /* 解决 Chrome fixed 抖动问题 */
     right: 10px;
     bottom: 28px;
     text-align: center;
     z-index: 10;
     border-radius: 4px;
     display: block;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    background-color: #000;
-    color: #ffffff;
-    -moz-transition: opacity .3s;
-    -o-transition: opacity .3s;
-    -webkit-transition: opacity .3s;
-    transition: opacity .3s;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    background-color: @text-color-dark;
+    color: #fff;
     text-decoration: none;
-    opacity: .5;
+    opacity: .7;
 
-    :hover {
-        opacity: .75;
+    &:hover {
+        transition: opacity @duration;
+        opacity: .9;
         color: #fff;
     }
 
@@ -1197,48 +1200,24 @@ body.doc-page {
 
 #doc_footer {
     border-top: 1px solid @border-color;
-    font-size: small;
-    margin-top: 2em;
-    padding-top: 14px;
-    padding-bottom: 42px;
+    font-size: @font-size-small;
+    margin-top: @font-size * 2;
+    padding-top: @font-size;
+    padding-bottom: @font-size * 3;
 
     div {
         float: right;
     }
 
     a {
-        padding: 0 .5em;
+        padding: 0 @margin-x / 2;
     }
 
     &, & a {
         color: #b8b8b8;
     }
-}
 
-@media @screen-small {
-
-    // 菜单
-    #doc_search, #doc_module_toolbar, &-toolbar a:last-child {
-        display: none;
-    }
-
-    #doc_navbar {
-        margin: 0 -@margin-x;
-        height: 0;
-        clear: both;
-        overflow: hidden;
-        -moz-transition: height .3s ease-out;
-        -o-transition: height .3s ease-out;
-        -webkit-transition: height .3s ease-out;
-        transition: height .3s ease-out;
-    }
-
-        #doc_navbar li {
-            float: none;
-        }
-
-    // 侧边栏
-    #doc_footer {
+    @media @screen-small {
         text-align: center;
 
         div {
