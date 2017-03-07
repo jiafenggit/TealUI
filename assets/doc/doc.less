@@ -13,6 +13,10 @@
 @primary-color-700: #00796b;
 @primary-color-800: #00695c;
 @primary-color-900: #004d40;
+@primary-color-a100: #a7ffeb;
+@primary-color-a200: #64ffda;
+@primary-color-a400: #1de9b6;
+@primary-color-a700: #00bfa5;
 
 @accent-color: #CD7957;
 
@@ -21,6 +25,7 @@
 @text-color-light: #858886;
 
 @border-color: #dadada;
+@border-color-light: #eee;
 
 @background-color: #fff;
 @background-color-header: #f7f7f7;
@@ -34,16 +39,13 @@
 @font-family-monospace: Monaco, Menlo, Consolas, "Courier New", "Helvetica Neue", Helvetica, "Microsoft Yahei", "Hiragino Sans GB", monospace;
 
 @font-size: 14px;
-@font-size-small: @font-size - 2px;
-
 @line-height: 1.5;
 @line-height-large: 1.75;
 @line-height-small: 1.25;
 
 @font-weight-normal: normal;
-@font-weight-bolder: 500;
-@font-weight-boldest: @font-weight-bolder + 100;
-@font-weight-bold: @font-weight-bolder - 100;
+@font-weight-bold: 500;
+@font-weight-bolder: 600;
 
 @margin-y: @font-size;
 @margin-x: @font-size;
@@ -54,7 +56,7 @@
 @screen-larger: ~"(min-width: 1600px)";
 
 @duration: .15s;
-@duration-slow: @duration + .15s;
+@duration-large: @duration + .15s;
 
 .doc {
 
@@ -83,13 +85,13 @@
                 font-family: DocIcon;
                 content: "♐";
                 vertical-align: -2px;
-                margin-left: .32em;
+                margin-left: 4px;
             }
         }
 
         small {
             color: @text-color-light;
-            font-size: @font-size-small;
+            font-size: @font-size - 2px;
             font-weight: @font-weight-normal;
 
             a {
@@ -105,8 +107,8 @@
         }
 
         kbd {
-            color: contrast(@text-color);
             background-color: @text-color;
+            color: contrast(@text-color);
             border-radius: 4px;
         }
 
@@ -118,7 +120,7 @@
 
     > h1, > h2, > h3, > h4, > h5, > h6 {
         margin: 0 0 @margin-y / 2;
-        font-weight: @font-weight-bolder;
+        font-weight: @font-weight-bold;
         color: @text-color-dark;
     }
 
@@ -132,7 +134,7 @@
 
     > h2:before, > h3:before, > dl dt:before, > dl dd:before {
         color: @text-color-light;
-        font-weight: @font-weight-bold;
+        font-weight: @font-weight-bold - 100;
     }
 
     > h2 {
@@ -181,7 +183,7 @@
 
     > dl {
         > dt {
-            font-weight: @font-weight-boldest;
+            font-weight: @font-weight-bolder;
         }
 
         > dd {
@@ -212,20 +214,28 @@
 
         th {
             color: @text-color-dark;
-            font-weight: @font-weight-bold;
+            font-weight: @font-weight-bold - 100;
             padding: @margin-x / 3 @margin-x / 2;
             text-align: left;
+        }
+
+        &.doc-table-fixed {
+            table-layout: fixed;
+            width: 100%;
+
+            * {
+                word-break: break-word;
+            }
         }
     }
 
     > blockquote {
-        background-color: @background-color-header;
         border: 1px solid @border-color;
+        background-color: @background-color-header;
         padding: @margin-x / 2 @margin-x;
         position: relative;
-        word-break: break-word;
 
-        &:after {
+        &:before {
             content: '';
             position: absolute;
             width: 3px;
@@ -236,19 +246,20 @@
         }
 
         > h5 {
-            &:extend(.doc > h5);
             margin: 0;
             color: @primary-color-500;
+            font-size: @font-size;
+            font-weight: @font-weight-bold;
 
             &:before {
                 font-family: DocIcon;
-                font-size: @font-size-small;
+                font-size: @font-size - 2px;
             }
         }
 
         .state(@state, @char) {
-            &.doc-@{state} {
-                &:after {
+            &.doc-blockquote-@{state} {
+                &:before {
                     background-color: ~"@{@{state}-color}";
                 }
 
@@ -274,18 +285,15 @@
         height: 0;
     }
 
-    > pre, > code {
-        &:extend(.doc > section code);
-    }
-
     > pre {
+        &:extend(.doc > section code);
         border: 1px solid @border-color;
         white-space: pre-wrap;
         word-break: break-all;
         line-height: @line-height;
         font-size: @font-size - 1px;
         color: @text-color;
-        padding: @font-size / 2;
+        padding: @margin-x / 2;
         max-height: 21em;
         overflow-y: auto;
         position: relative;
@@ -298,7 +306,7 @@
         }
     }
 
-    > table, > img, > textarea, > input, > button {
+    > table, > img, > textarea, > input, > button, > select, > canvas, > video, > audio {
         box-sizing: border-box;
         max-width: 100%;
     }
@@ -342,15 +350,6 @@
     float: right !important;
 }
 
-.doc-table-fixed {
-    table-layout: fixed;
-    width: 100%;
-
-    * {
-        word-break: break-word;
-    }
-}
-
 .doc-scrollable-horizional {
     overflow-x: auto;
 }
@@ -360,7 +359,7 @@
 
     &:hover {
         overflow-y: auto;
-        // Chrome 需要此属性导致重绘
+        // Chrome: 强制重绘。
         padding-right: .1px;
     }
 }
@@ -431,7 +430,7 @@
     }
 
     a &:first-child {
-        margin-right: .32em;
+        margin-right: 4px;
     }
 }
 
@@ -441,7 +440,7 @@
     color: @primary-color-500;
     padding: 2px 4px;
     border-radius: 3px;
-    font-size: @font-size-small;
+    font-size: @font-size - 2px;
 
     &:hover {
         background: darken(@primary-color-50, 7%);
@@ -469,7 +468,7 @@
 .doc-toolbar {
     margin: 0;
     padding: 0;
-    font-size: @font-size-small !important;
+    font-size: @font-size - 2px !important;
     line-height: 1;
 
     a {
@@ -703,8 +702,8 @@
 
 #doc_index {
     background: @background-color-header;
-    border-top: 1px solid #EEE;
-    border-bottom: 1px solid #EEE;
+    border-top: 1px solid @border-color-light;
+    border-bottom: 1px solid @border-color-light;
     margin-bottom: @margin-y;
 
     h2 {
@@ -721,13 +720,13 @@
         background: #fff;
         margin: 0 0 0 45px + @margin-x;
         padding: @margin-y / 2 @margin-x;
-        border-left: 1px solid #EEE;
+        border-left: 1px solid @border-color-light;
     }
 
     dt {
         counter-increment: doc-dt;
         counter-reset: doc-dd;
-        font-weight: @font-weight-bolder;
+        font-weight: @font-weight-bold;
         margin: 0;
 
         &:before {
@@ -757,7 +756,7 @@
 }
 
 #doc_summary {
-    border: 1px solid #eee;
+    border: 1px solid @border-color-light;
     background-color: @background-color-header;
     padding: @margin-x / 2 @margin-x;
 }
@@ -803,7 +802,7 @@ body.doc-page {
         }
 
         .doc-sidebar-actived, .doc-sidebar-inactived {
-            transition: left @duration-slow ease-out;
+            transition: left @duration-large ease-out;
         }
 
         #doc_mask {
@@ -814,7 +813,7 @@ body.doc-page {
             -webkit-user-drag: none;
             z-index: 10001;
             opacity: 0;
-            transition: opacity @duration-slow ease-out;
+            transition: opacity @duration-large ease-out;
         }
 
         .doc-sidebar-actived + #doc_mask {
@@ -850,7 +849,7 @@ body.doc-page {
 }
 
 #doc_logo {
-    font-weight: @font-weight-boldest;
+    font-weight: @font-weight-bolder;
     background: url('images/logo.png?__inline') no-repeat 0 40% !important;
     padding-left: 26px !important;
 
@@ -1111,7 +1110,7 @@ body.doc-page {
 
     ul {
         transition: height .3s;
-        @indent-width: 1.32em;
+        @indent-width: 14px;
 
         a {
             padding-left: @indent-width * 1;
@@ -1200,7 +1199,7 @@ body.doc-page {
 
 #doc_footer {
     border-top: 1px solid @border-color;
-    font-size: @font-size-small;
+    font-size: @font-size - 2px;
     margin-top: @font-size * 2;
     padding-top: @font-size;
     padding-bottom: @font-size * 3;
