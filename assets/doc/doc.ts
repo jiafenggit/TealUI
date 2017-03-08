@@ -3,7 +3,302 @@
  * @author xuld <xuld@vip.qq.com>
  */
 
+/**
+ * 全局文档对象。
+ */
 const Doc = {
+
+    /**
+     * 版本号。
+     */
+    version: "4.0",
+
+    /**
+     * 一级导航。
+     */
+    menu: {
+        index: {
+            title: "TealUI",
+            description: "全力打造小而全、精而美的开源前端组件库",
+            index: "assets/data/components.js"
+        },
+        docs: {
+            title: '文档教程',
+            description: '这里包含了所有文档、教程和规范，从零开始快速掌握组件用法。',
+            index: "assets/data/docs.js"
+        },
+        components: {
+            title: '组件列表',
+            description: 'TealUI 提供了 300+ 个常用组件，满足大部分需求。每个组件依赖性小，代码短，可单独下载。',
+            index: "assets/data/components.js"
+        },
+        tools: {
+            title: '前端工具',
+            description: 'TealUI 提供了组件定制、代码压缩、合并等常用在线工具',
+            index: "assets/data/tools.js"
+        }
+    },
+
+    /**
+     * 项目根路径。
+     */
+    basePath: "../../",
+
+    /**
+     * 初始化页面框架。
+     */
+    initPage() {
+
+        // 识别环境。
+        const docJs = (document.currentScript as HTMLScriptElement || document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1] || {}).src || "";
+        const baseUrl = Doc.normalizeUrl(docJs + "/../" + Doc.basePath);
+        const path = location.href.replace(/[?#].*$/, "").replace(/\/index\.html$/, "/").slice(baseUrl.length);
+        const menu = path.substr(0, path.indexOf('/'));
+        const frame = (/[?&]frame=([^&]*)/i.exec(location.search) || [])[1] || document.documentElement.getAttribute("data-frame") || "";
+
+        if (frame === "none") {
+            return;
+        }
+
+        let html = `<link rel="stylesheet" href="${docJs.replace(/\.js$/i, ".css")}" />`;
+
+        if (frame !== "full") {
+            html += `<div id="doc_progress" style="width: 50%;"></div>
+                    <nav id="doc_topbar" class="doc-container doc-clear">
+                        <a href="" id="doc_logo" title="${Doc.menu.index.title} | ${Doc.menu.index.description}">${Doc.menu.index.title} <small>${Doc.version}</small></a>
+                        <menu id="doc_menu">
+                            <button type="button" id="doc_menu_search" onclick="Doc.toggleSidebar()"><i class="doc-icon">搜</i></button>
+                            <button type="button" id="doc_menu_navbar" onclick="Doc.toggleNavbar()"><i class="doc-icon">≡</i></button>
+                        </menu>
+                        <menu id="doc_navbar">`;
+            for (const key in Doc.menu) {
+                if (key !== "index") {
+                    const value = Doc.menu[key];
+                    html += `<li><a href="${baseUrl}${value.url || key}"${key === menu ? ` class="doc-navbar-actived"` : ""}>${value.title}</a></li>`;
+                }
+            }
+            const menuInfo = Doc.menu[menu] || Doc.menu.index;
+            html += `   </menu>
+                        <form id="doc_search" class="doc-right">
+                            <input type="text" placeholder="搜索组件..." />
+                            <button type="submit" class="doc-icon-search"><i class="doc-icon">搜</i></button>
+                        </form>
+                    </nav>
+                    <header id="doc_header" class="doc doc-container">
+                        <h1>${menuInfo.title}</h1>
+                        <p>${menuInfo.description}</p>
+                    </header>`;
+        }
+
+        html += `
+	<menu id="doc_module_toolbar" class="doc-toolbar doc-right">
+		<a href="###"><i class="doc-icon">⭳</i>下载</a>
+		<a href="###"><i class="doc-icon">✰</i>收藏</a>
+		<a href="###"><i class="doc-icon">▹</i>测试</a>
+		<a href="${Doc.setQuery(location.href, "frame", frame === "full" ? null : "full")}"><i class="doc-icon">${frame === "full" ? "✠" : "✥"}</i>${frame === "full" ? "恢复" : "全屏"}</a>
+	</menu>`;
+
+        html += `<h1 id="doc_title">${document.title} <small>${path.slice(menu.length + 1).replace(/\..*$/, "")}</small> `;
+        const tags = document.querySelector("meta[name=tags]") as HTMLMetaElement;
+        if (tags) {
+            html += tags.content.split(",").map(tag => `<a class="doc-tag">${tag}</a>`);
+        }
+        html += `</h1>`;
+        const meta = document.querySelector("meta[name=description]") as HTMLMetaElement;
+        if (meta) {
+            html += `<p id="doc_summary">${meta.content}</p>`;
+        }
+
+        document.write(html);
+
+        if (frame !== "full") {
+            document.body.className += " doc-page";
+        }
+
+        return;
+
+        // 如果当前页面不是独立的页面。
+        if (Doc.frame !== "page") {
+
+            // 如果不是全屏模式，则生成页面主结构。
+            if (Doc.frame !== "fullscreen" && +"\v1") {
+
+                var data = {
+                    baseUrl: Doc.baseUrl,
+                    version: Doc.version,
+
+                    current(field) {
+                        return Doc.folders[Doc.folder][field];
+                    },
+
+                    title: document.title,
+                    name: Doc.path.replace(/\..*$/, ""),
+
+                    fullScreenUrl: Doc.appendQuery(location.href, 'frame', 'fullscreen'),
+                    indexUrl: location.protocol === 'file:' ? 'index.html' : '',
+
+                    search: '',
+                    shiftKey: navigator.userAgent.indexOf('Firefox') >= 0 ? '+Shift' : '',
+                    touchToClick: navigator.userAgent.indexOf('UCBrowser') >= 0 ? '' : 'ontouchstart="this.click(); return false;"',
+
+                    download(html) {
+                        return this.name && Doc.folder === 'src' ? html.replace('#', Doc.baseUrl + 'tools/download.html?path=' + Doc.path) : '';
+                    },
+
+                    favorite(html) {
+                        return ~(Doc.getStore('favorites') || '').indexOf(Doc.folder + "/" + Doc.path) ? '<span class="doc-icon">★</span>已收藏' : '<span class="doc-icon">✰</span>收藏';
+                    },
+
+                    actived(name) {
+                        return name === Doc.folder ? ' class="doc-actived"' : '';
+                    },
+
+                    local(html) {
+                        return Doc.local ? html : '';
+                    }
+
+                };
+
+                html += Doc.parseTpl(Doc.headerTpl, data);
+
+                // 生成底部。
+                Doc.ready(function () {
+
+                    // 插入多说评论框。
+                    if (!Doc.local) {
+
+                    }
+
+                    // 插入底部。
+                    var footer = document.body.appendChild(document.createElement('footer'));
+                    footer.id = 'doc_footer';
+                    footer.className = 'doc-container doc-section';
+                    footer.innerHTML = Doc.parseTpl(Doc.footerTpl, data);
+
+                    // 插入页面结构。
+                    var indexHtml = '<h2>目录</h2><dl>', counter1 = 0, counter2 = 0;
+                    Doc.iterate("h2, h3", function (header) {
+                        if (header.parentNode.className.indexOf('doc-demo') >= 0) {
+                            return;
+                        }
+                        var h2 = header.tagName === 'H2';
+                        var title = header.firstChild.textContent.trim();
+                        if (h2) {
+                            counter1++;
+                            counter2 = 0;
+                        } else {
+                            counter2++;
+                        }
+                        indexHtml += Doc.parseTpl('<{tagName}><a href="#{id}" title="{title}">{title}</{tagName}>', {
+                            tagName: h2 ? 'dt' : 'dd',
+                            id: header.id || (header.id = (h2 ? counter1 + '.' + title : counter1 + '.' + counter2 + ' ' + title)),
+                            title: title
+                        });
+                    });
+                    if (counter1 > 1) {
+                        indexHtml += '</dl>';
+                        var p = document.getElementById('doc_summary') || document.getElementById('doc_title');
+                        var index = p.parentNode.insertBefore(document.createElement('nav'), p.nextSibling);
+                        index.className = 'doc-index doc-section';
+                        index.innerHTML = indexHtml;
+                    }
+
+                    // 底部影响边栏大小。
+                    Doc.updateLayout(true);
+
+                });
+
+            }
+            // 追加标题后缀。
+            document.title += Doc.titlePostfix;
+
+            // 插入页面框架。
+            document.write(html);
+
+            // 追加默认样式。
+            Doc.addClass(document.body, 'doc');
+            if (Doc.frame != "fullscreen") {
+                Doc.addClass(document.body, 'doc-page');
+            }
+
+            // 初始化侧边栏。
+            var list = document.getElementById('doc_sidebar_list');
+            if (list) {
+
+                // 为 PC 用户增加体验，隐藏滚动条。
+                if (!Doc.isTouch()) {
+                    list.className += ' doc-hidescrollbar';
+                }
+
+                // 滚动和重置大小后实时更新。
+                window.addEventListener('resize', Doc.updateLayout, false);
+                window.addEventListener('scroll', Doc.updateLayout, false);
+                window.addEventListener('load', Doc.updateLayout, false);
+
+                // 更新列表大小。
+                Doc.updateLayout();
+
+                // 载入列表内容。
+                Doc.loadModuleList(function () {
+
+                    // 更新列表项。
+                    Doc.updateModuleList(list, Doc.folder, '', true);
+
+                    // 绑定列表滚动大小。
+                    if (window.localStorage) {
+                        list.addEventListener('scroll', function () {
+                            Doc.setStore('listScrollTop', document.getElementById('doc_sidebar_list').scrollTop);
+                        }, false);
+                        if (Doc.getStore('listScrollTop') != null) {
+                            list.scrollTop = Doc.getStore('listScrollTop');
+                        }
+                    }
+
+                    Doc.scrollActivedItemIntoView(list, true);
+
+                    // 某些平台下可能暂时无法滚动。
+                    list.scrollTop || setTimeout(function () {
+                        Doc.scrollActivedItemIntoView(list, true);
+                    }, 50);
+                });
+
+            }
+
+        }
+
+        // #endregion
+
+        // #region 用户体验
+
+        // 插入语法高亮代码。
+        Doc.ready(Doc.renderCodes);
+
+        // 将当前页面加入历史记录。
+        if (Doc.maxModuleViewHistory && Doc.folder === 'src') {
+            var histories = Doc.getStore('moduleViewHistory') || [];
+            histories.indexOf(Doc.path) >= 0 && histories.splice(histories.indexOf(Doc.path), 1);
+            histories.push(Doc.path) > Doc.maxModuleViewHistory && histories.shift();
+            Doc.setStore('moduleViewHistory', histories);
+        }
+
+        // 插入百度统计代码。
+        if (!Doc.local) {
+            Doc.loadScript("//hm.baidu.com/h.js?a37192ce04370b8eb0c50aa13e48a15b");
+        }
+
+        // #endregion
+
+    },
+
+    /**
+     * 格式化指定的地址。
+     * @param url 要处理的地址。
+     */
+    normalizeUrl(url: string) {
+        const a = document.createElement("a");
+        a.href = url;
+        return a.href;
+    },
 
     /**
      * 判断当前开发系统是否在本地运行。
@@ -102,16 +397,18 @@ const Doc = {
      * @example setQuery("a.html?b=d", "b", "c") // "a.html?b=c"
      * @example setQuery("a.html?b=d", "add", "val") // "a.html?b=d&add=val"
      */
-    setQuery(url: string, name: string, value: string) {
-        value = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-        const match = /^(.*?)(\?.+?)?(#.*)?$/.exec(url)!;
+    setQuery(url: string, name: string, value: string | null) {
+        const match = /^(.*?)(\?.*?)?(#.*)?$/.exec(url) !;
         match[0] = "";
+        if (value != null) {
+            value = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        }
         match[2] = match[2] && match[2].replace(new RegExp("([?&])" + name.replace(/([-.*+?^${}()|[\]\/\\])/g, "\$1") + "(=[^&]*)?(&|$)"), (_: string, q1: string, __: string, q2: string) => {
             // 标记已解析过。
             name = "";
-            return q1 + value + q2;
+            return value == null ? q2 ? q1.charAt(0) === "?" ? "?" : "&" : "" : q1 + value + q2;
         });
-        if (name) {
+        if (name && value != null) {
             match[2] = (match[2] ? match[2] + "&" : "?") + value;
         }
         return match.join("");
@@ -122,7 +419,7 @@ const Doc = {
      */
     getStore(key) {
         try {
-            return JSON.parse(localStorage.getItem("doc_store")!)[key];
+            return JSON.parse(localStorage.getItem("doc_store") !)[key];
         } catch (e) {
             return null;
         }
@@ -147,72 +444,6 @@ const Doc = {
         }
     },
 
-    init() {
-        const page = (/[?&]page=([^&]*)/i.exec(location.search) || 0)[1] || document.documentElement.getAttribute("data-page") || "";
-        const docScript = (document.currentScript as HTMLScriptElement || document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1] || {}).src;
-        const version = "4.0";
-        const titlePrefix = "TealUI | 全力打造小而全、精而美的开源前端组件库";
-
-        if (page === "none") {
-            return;
-        }
-
-        let html = `<link rel="stylesheet" href="${docScript.replace(/\.js$/i, ".css")}" />`;
-
-        if (page !== "full") {
-            html += `<nav id="doc_topbar" class="doc-container doc-clear">
-		<a href="" id="doc_logo" title="${titlePrefix}">TealUI <small>${version}</small></a>
-		<menu id="doc_menu">
-			<button type="button" id="doc_menu_search"><i class="doc-icon">搜</i></button>
-			<button type="button" id="doc_menu_navbar"><i class="doc-icon">≡</i></button>
-		</menu>
-		<menu id="doc_navbar">
-			<li><a href="../../../docs">文档教程</a></li>
-			<li><a href="../../../components">组件列表</a></li>
-			<li><a href="../../../tools">前端工具</a></li>
-		</menu>
-		<form id="doc_search" class="doc-right">
-			<input type="text" placeholder="搜索组件..." />
-			<button type="submit" class="doc-icon-search"><i class="doc-icon">搜</i></button>
-			<menu id="doc_search_suggest" class="doc-tree">
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><a href="###"><mark>组</mark>件 <small>zujian</small><br /><small>说明说明说明说明说明说明说明说明说明说明说明说明</small></a></li>
-				<li><small>无搜索结果</small></li>
-			</menu>
-		</form>
-	</nav>`;
-        } else if (!document.body) {
-            // 确保 document.body 已生成。
-            html += `<span/>`;
-        }
-
-    },
-
-    initTOC() {
-
-    },
-
-    initCommentBox() {
-        const div = document.createElement("div");
-        const path = location.pathname.replace(/\/$/, "/index.html");
-        div.className = "ds-thread";
-        div.setAttribute("data-thread-key", path);
-        div.setAttribute("data-title", document.title);
-        div.setAttribute("data-url", path);
-        document.body.appendChild(div);
-
-        (window as any).duoshuoQuery = { short_name: "teal" };
-        Doc.loadScript("//static.duoshuo.com/embed.js", Doc.updateLayout);
-    },
-
     // #region 配置
 
     /**
@@ -221,62 +452,9 @@ const Doc = {
     servicesUrl: 'http://localhost:5373/assets/services/',
 
     /**
-     * 配置所有文件夹信息。
-     */
-    folders: {
-
-        /**
-         * 存放文档文件的文件夹。
-         */
-        docs: {
-            pageName: '文档',
-            pageTitle: '开始使用',
-            pageDescription: '这里包含了所有文档和教程，从零开始快速上手组件。'
-        },
-
-        /**
-         * 存放文档文件的文件夹。
-         */
-        demos: {
-            pageName: '实例',
-            pageTitle: '实例演示',
-            pageDescription: '这里包含了所有组件的效果预览，以及一些现成的网页模板。'
-        },
-
-        /**
-         * 存放示例文件的文件夹。
-         */
-        src: {
-            pageName: '组件',
-            pageTitle: '所有组件',
-            pageDescription: 'TealUI 提供了 200 多个常用组件，满足多数需求。每个组件依赖性小，代码短，可单独下载。'
-        },
-
-        /**
-         * 存放文档系统文件的文件夹。
-         */
-        assets: {
-            pageName: '工具',
-            pageTitle: '开发者工具',
-            pageDescription: 'TealUI 提供了组件定制、代码压缩、合并等常用工具'
-        }
-
-    },
-
-    /**
      * 配置当前项目使用的编码。
      */
     encoding: 'utf-8',
-
-    /**
-     * 配置索引文件的路径。
-     */
-    indexPath: 'assets/data/index.js',
-
-    /**
-     * 配置当前项目的基础路径。
-     */
-    basePath: '../../',
 
     /**
      * 配置存储组件源信息的 meta 节点名。
@@ -287,16 +465,6 @@ const Doc = {
      * 配置组件访问历史记录闸值。
      */
     maxModuleViewHistory: 10,
-
-    /**
-     * 配置当前项目的版本。
-     */
-    version: '3.0',
-
-    /**
-     * 配置显示在网页的标题后缀。
-     */
-    titlePostfix: ' - TealUI | 最完整的开源前端代码库',
 
     /**
      * 配置当前网页的模板。
@@ -363,7 +531,7 @@ const Doc = {
      * @param {Object} data 格式化参数。
      * @returns {String} 格式化后的字符串。
      */
-    parseTpl: function (tpl, data) {
+    parseTpl(tpl, data) {
         return tpl.replace(/\{\{|\{([^}]+)\}|\}\}/g, function (matched, argName) {
             argName = argName ? (matched = argName.indexOf(':')) < 0 ? data[argName] : data[argName.substr(0, matched)](argName.substr(matched + 1)) : matched.charAt(0);
             return argName == null ? '' : argName;
@@ -373,7 +541,7 @@ const Doc = {
     /**
      * 解析模块信息字符串为对象。
      */
-    parseModuleInfo: function (value) {
+    parseModuleInfo(value) {
         var result = {};
         value.replace(/([^,;&=\s]+?)\s*=\s*([^,;&]*)/g, function (_, key, value) {
             result[key] = value;
@@ -384,7 +552,7 @@ const Doc = {
     /**
      * 将指定模块信息对象转为字符串。
      */
-    stringifyModuleInfo: function (value) {
+    stringifyModuleInfo(value) {
         var r = [], key;
         for (key in value) {
             r.push(key + '=' + value[key]);
@@ -411,7 +579,7 @@ const Doc = {
              * @param {Element} elem 要高亮的节点。
              * @param {String} [language] 高亮的语法。系统会自动根据源码猜测语言。
              */
-            oneAsync: function (element, language) {
+            oneAsync(element, language) {
                 setTimeout(function () {
                     Doc.SyntaxHighligher.one(element, language);
                 }, 0);
@@ -434,7 +602,7 @@ const Doc = {
             /**
              * 删除公共缩进部分。
              */
-            removeLeadingWhiteSpaces: function (value) {
+            removeLeadingWhiteSpaces(value) {
                 value = value && value.replace(/^[\r\n]+/, "").replace(/\s+$/, "");
                 var space = /^\s+/.exec(value), i;
                 if (space) {
@@ -452,7 +620,7 @@ const Doc = {
              * 所有可用的刷子。
              */
             brushes: {
-                none: function (sourceCode, position) {
+                none(sourceCode, position) {
                     return [position, 'plain'];
                 }
             },
@@ -472,7 +640,7 @@ const Doc = {
              *
              * 表示源码中， 位置n-1 到 位置n 之间应用样式n-1
              */
-            createBrush: function (stylePatterns) {
+            createBrush(stylePatterns) {
 
                 (function () {
                     var shortcuts = {},
@@ -598,7 +766,7 @@ const Doc = {
              * @param {String} sourceCode 需要高亮的源码。
              * @returns {String} 返回一个语言名。
              */
-            guessLanguage: function (sourceCode) {
+            guessLanguage(sourceCode) {
                 return /^\s*</.test(sourceCode) && />\s*$/.test(sourceCode) ? 'html' : /\w\s*\{\s*[\w\-]+\s*:/.test(sourceCode) ? 'css' : /=|[\w$]\s+[\w$]|[\w$]\(|\)\.|\/\//.test(sourceCode) ? 'js' : null;
             },
 
@@ -607,7 +775,7 @@ const Doc = {
              * @param {String} language 要查找的语言名。
              * @returns {Function} 返回一个刷子，用于高亮指定的源码。
              */
-            findBrush: function (language) {
+            findBrush(language) {
                 return SH.brushes[language] || SH.brushes.none;
             },
 
@@ -617,7 +785,7 @@ const Doc = {
              * @param {Array} stylePatterns 匹配的正则列表。见 {@link SyntaxHighligher.createBrush}
              * @returns {Function} 返回一个刷子，用于高亮指定的源码。
              */
-            register: function (language, stylePatterns) {
+            register(language, stylePatterns) {
                 language = language.split(' ');
                 stylePatterns = SH.createBrush(stylePatterns);
                 for (var i = 0; i < language.length; i++) {
@@ -1403,14 +1571,14 @@ const Doc = {
     /**
      * 为指定节点增加类名。
      */
-    addClass: function (node, className) {
+    addClass(node, className) {
         node.className = node.className ? node.className + ' ' + className : className;
     },
 
     /**
      * 执行 CSS 选择器并对每个节点执行回调。
      */
-    iterate: function (selector, callback) {
+    iterate(selector, callback) {
         var nodes = document.querySelectorAll(selector);
         for (var i = 0, node; node = nodes[i]; i++) {
             callback(node, i, nodes);
@@ -1421,257 +1589,56 @@ const Doc = {
 
     // #region 页面交互
 
-    /**
-     * 初始化页面框架。
-     */
-    initPage: function () {
+    init() {
 
-        // #region IE8 修复
-
-        /*@cc_on if (!+"\v1") {
-         
-        /// 获取指定项在数组内的索引。
-        /// @param {Object} value 一个类数组对象。
-        /// @param {Number} [startIndex=0] 转换开始的位置。
-        /// @returns {Number} 返回索引。如果找不到则返回 -1。
-        /// @example ["b", "c", "a", "a"].indexOf("a"); // 2
-        /// @since ES4
-        Array.prototype.indexOf = Array.prototype.indexOf || function (value, startIndex) {
-            startIndex = startIndex || 0;
-            for (var len = this.length; startIndex < len; startIndex++) {
-                if (this[startIndex] === value) {
-                    return startIndex;
-                }
-            }
-            return -1;
-        };
-
-        'article,section,header,footer,nav,aside,details,summary,menu'.replace(/\w+/g, function (tagName) {
-            document.createElement(tagName);
-        });
-        document.write("<style>article,section,header,footer,nav,aside,details,summary,menu {display:block};</style><div/>");
-
-        } @*/
-
-        // #endregion
-
-        // #region 初始化配置
-
-        // 获取当前 doc.js 所在路径。
-        var docJsPath = document.getElementsByTagName("script");
-        docJsPath = docJsPath[docJsPath.length - 1].src;
-
-        // 获取当前项目的跟目录。
-        var url = document.createElement('a');
-        url.href = docJsPath.replace(/\/[^\/]*$/, "/") + Doc.basePath;
-        url = url.href;
-        Doc.baseUrl = url.replace(/^https?:\/\/[^\/]*/, '');
-
-        // 获取当前项目路径。
-        var path = location.href.replace(/[?#].*$/, "");
-        if (path.indexOf(url) === 0) {
-            path = path.substr(url.length);
-        }
-        path = /^([^\/]+)\/(.*)$/.exec(path) || [0, path, ""];
-        Doc.folder = path[1] in Doc.folders ? path[1] : 'assets';
-        Doc.path = path[2].replace(/(\/|^)index\.\w+$/, "");
-
-        // #endregion
-
-        // #region 生成页面
-
-        // 如果当前页面不是独立的页面。
-        if (Doc.frame !== "page") {
-
-            // 如果页面框架设置为无，则不再继续处理。
-            if (Doc.frame === 'none') {
-                return;
-            }
-
-            // 载入 CSS 样式。
-            var html = '<link type="text/css" rel="stylesheet" href="' + docJsPath.replace(/\.js\b/, '.css') + '" />';
-
-            // 如果不是全屏模式，则生成页面主结构。
-            if (Doc.frame !== "fullscreen" && +"\v1") {
-
-                var data = {
-                    baseUrl: Doc.baseUrl,
-                    version: Doc.version,
-
-                    current: function (field) {
-                        return Doc.folders[Doc.folder][field];
-                    },
-
-                    title: document.title,
-                    name: Doc.path.replace(/\..*$/, ""),
-
-                    fullScreenUrl: Doc.appendQuery(location.href, 'frame', 'fullscreen'),
-                    indexUrl: location.protocol === 'file:' ? 'index.html' : '',
-
-                    search: '',
-                    shiftKey: navigator.userAgent.indexOf('Firefox') >= 0 ? '+Shift' : '',
-                    touchToClick: navigator.userAgent.indexOf('UCBrowser') >= 0 ? '' : 'ontouchstart="this.click(); return false;"',
-
-                    download: function (html) {
-                        return this.name && Doc.folder === 'src' ? html.replace('#', Doc.baseUrl + 'tools/download.html?path=' + Doc.path) : '';
-                    },
-
-                    favorite: function (html) {
-                        return ~(Doc.getStore('favorites') || '').indexOf(Doc.folder + "/" + Doc.path) ? '<span class="doc-icon">★</span>已收藏' : '<span class="doc-icon">✰</span>收藏';
-                    },
-
-                    actived: function (name) {
-                        return name === Doc.folder ? ' class="doc-actived"' : '';
-                    },
-
-                    summary: function (html) {
-                        var meta = document.querySelector('meta[name=description]');
-                        return meta && meta.content ? html.replace('>', '>' + meta.content) : '';
-                    },
-
-                    local: function (html) {
-                        return Doc.local ? html : '';
-                    }
-
-                };
-
-                html += Doc.parseTpl(Doc.headerTpl, data);
-
-                // 生成底部。
-                Doc.ready(function () {
-
-                    // 插入多说评论框。
-                    if (!Doc.local) {
-
-                    }
-
-                    // 插入底部。
-                    var footer = document.body.appendChild(document.createElement('footer'));
-                    footer.id = 'doc_footer';
-                    footer.className = 'doc-container doc-section';
-                    footer.innerHTML = Doc.parseTpl(Doc.footerTpl, data);
-
-                    // 插入页面结构。
-                    var indexHtml = '<h2>目录</h2><dl>', counter1 = 0, counter2 = 0;
-                    Doc.iterate("h2, h3", function (header) {
-                        if (header.parentNode.className.indexOf('doc-demo') >= 0) {
-                            return;
-                        }
-                        var h2 = header.tagName === 'H2';
-                        var title = header.firstChild.textContent.trim();
-                        if (h2) {
-                            counter1++;
-                            counter2 = 0;
-                        } else {
-                            counter2++;
-                        }
-                        indexHtml += Doc.parseTpl('<{tagName}><a href="#{id}" title="{title}">{title}</{tagName}>', {
-                            tagName: h2 ? 'dt' : 'dd',
-                            id: header.id || (header.id = (h2 ? counter1 + '.' + title : counter1 + '.' + counter2 + ' ' + title)),
-                            title: title
-                        });
-                    });
-                    if (counter1 > 1) {
-                        indexHtml += '</dl>';
-                        var p = document.getElementById('doc_summary') || document.getElementById('doc_title');
-                        var index = p.parentNode.insertBefore(document.createElement('nav'), p.nextSibling);
-                        index.className = 'doc-index doc-section';
-                        index.innerHTML = indexHtml;
-                    }
-
-                    // 底部影响边栏大小。
-                    Doc.updateLayout(true);
-
-                });
-
-            }
-            // 追加标题后缀。
-            document.title += Doc.titlePostfix;
-
-            // 插入页面框架。
-            document.write(html);
-
-            // 追加默认样式。
-            Doc.addClass(document.body, 'doc');
-            if (Doc.frame != "fullscreen") {
-                Doc.addClass(document.body, 'doc-page');
-            }
-
-            // 初始化侧边栏。
-            var list = document.getElementById('doc_sidebar_list');
-            if (list) {
-
-                // 为 PC 用户增加体验，隐藏滚动条。
-                if (!Doc.isTouch()) {
-                    list.className += ' doc-hidescrollbar';
-                }
-
-                // 滚动和重置大小后实时更新。
-                window.addEventListener('resize', Doc.updateLayout, false);
-                window.addEventListener('scroll', Doc.updateLayout, false);
-                window.addEventListener('load', Doc.updateLayout, false);
-
-                // 更新列表大小。
-                Doc.updateLayout();
-
-                // 载入列表内容。
-                Doc.loadModuleList(function () {
-
-                    // 更新列表项。
-                    Doc.updateModuleList(list, Doc.folder, '', true);
-
-                    // 绑定列表滚动大小。
-                    if (window.localStorage) {
-                        list.addEventListener('scroll', function () {
-                            Doc.setStore('listScrollTop', document.getElementById('doc_sidebar_list').scrollTop);
-                        }, false);
-                        if (Doc.getStore('listScrollTop') != null) {
-                            list.scrollTop = Doc.getStore('listScrollTop');
-                        }
-                    }
-
-                    Doc.scrollActivedItemIntoView(list, true);
-
-                    // 某些平台下可能暂时无法滚动。
-                    list.scrollTop || setTimeout(function () {
-                        Doc.scrollActivedItemIntoView(list, true);
-                    }, 50);
-                });
-
-            }
+        if (page !== "full") {
 
         }
 
-        // #endregion
+    },
 
-        // #region 用户体验
+    initTOC() {
 
-        // 插入语法高亮代码。
-        Doc.ready(Doc.renderCodes);
+    },
 
-        // 将当前页面加入历史记录。
-        if (Doc.maxModuleViewHistory && Doc.folder === 'src') {
-            var histories = Doc.getStore('moduleViewHistory') || [];
-            histories.indexOf(Doc.path) >= 0 && histories.splice(histories.indexOf(Doc.path), 1);
-            histories.push(Doc.path) > Doc.maxModuleViewHistory && histories.shift();
-            Doc.setStore('moduleViewHistory', histories);
-        }
+    initCommentBox() {
+        const div = document.createElement("div");
+        const path = location.pathname.replace(/\/$/, "/index.html");
+        div.className = "ds-thread";
+        div.setAttribute("data-thread-key", path);
+        div.setAttribute("data-title", document.title);
+        div.setAttribute("data-url", path);
+        document.body.appendChild(div);
 
-        // 插入百度统计代码。
-        if (!Doc.local) {
-            Doc.loadScript("//hm.baidu.com/h.js?a37192ce04370b8eb0c50aa13e48a15b");
-        }
-
-        // #endregion
-
+        (window as any).duoshuoQuery = { short_name: "teal" };
+        Doc.loadScript("//static.duoshuo.com/embed.js", Doc.updateLayout);
     },
 
     // #region 侧边栏和导航条
 
     /**
+     * 在手机模式切换显示导航条。
+     */
+    toggleNavbar() {
+        const menu = document.getElementById('doc_menu_navbar')!;
+        const navbar = document.getElementById('doc_navbar')!;
+        if (menu.className) {
+            menu.className = '';
+            navbar.style.height = '';
+        } else {
+            menu.className = 'doc-menu-actived';
+            navbar.style.height = 'auto';
+            const height = navbar.offsetHeight;
+            navbar.style.height = '';
+            navbar.offsetHeight;
+            navbar.style.height = height + 'px';
+        }
+    },
+
+    /**
      * 更新页面布局。
      */
-    updateLayout: function (updateSidebarOnly) {
+    updateLayout(updateSidebarOnly) {
         var sidebar = document.getElementById('doc_sidebar'),
             list = document.getElementById('doc_sidebar_list'),
             filter = document.getElementById('doc_sidebar_filter'),
@@ -1725,31 +1692,9 @@ const Doc = {
     },
 
     /**
-     * 在手机模式切换显示导航条。
-     */
-    toggleNavbar: function () {
-        var menu = document.getElementById('doc_menu_navbar'),
-            navbar = document.getElementById('doc_navbar'),
-            height;
-
-        if (menu.className) {
-            menu.className = '';
-            navbar.style.height = '';
-        } else {
-            menu.className = 'doc-menu-actived';
-            navbar.style.height = 'auto';
-            height = navbar.offsetHeight;
-            navbar.style.height = '';
-            navbar.offsetHeight;
-            navbar.style.height = height + 'px';
-        }
-
-    },
-
-    /**
      * 在手机模式切换侧边栏。
      */
-    toggleSidebar: function () {
+    toggleSidebar() {
         var sidebar = document.getElementById('doc_sidebar');
         if (sidebar.className !== 'doc-sidebar-actived') {
             sidebar.className = 'doc-sidebar-actived';
@@ -1762,7 +1707,7 @@ const Doc = {
     /**
      * 显示搜索下拉菜单。
      */
-    showSearchSuggest: function (filter) {
+    showSearchSuggest(filter) {
         var suggest = document.getElementById('doc_search_suggest');
         if (!suggest) {
             suggest = document.getElementById('doc_search').appendChild(document.createElement('dl'));
@@ -1789,7 +1734,7 @@ const Doc = {
     /**
      * 隐藏搜索下拉菜单。
      */
-    hideSearchSuggest: function () {
+    hideSearchSuggest() {
         var suggest = document.getElementById('doc_search_suggest');
         if (suggest) {
             setTimeout(function () {
@@ -1805,7 +1750,7 @@ const Doc = {
     /**
      * 载入组件列表并执行回调。
      */
-    loadModuleList: function (callback) {
+    loadModuleList(callback) {
         if (Doc.moduleList) {
             return callback(Doc.moduleList);
         }
@@ -1821,7 +1766,7 @@ const Doc = {
      * @param {String} filter 搜索的关键字。
      * @param {Boolean} showHeader 是否显示标题。
      */
-    updateModuleList: function (elem, listName, filter, showHeader) {
+    updateModuleList(elem, listName, filter, showHeader) {
 
         if (!elem) {
             return;
@@ -1963,7 +1908,7 @@ const Doc = {
      * @param {Element} elem 列表容器 DL 元素。
      * @param {Boolean} [down=true] 如果为 false 则向上翻否则向下。
      */
-    moveActivedItem: function (elem, down) {
+    moveActivedItem(elem, down) {
         // 只在存在项执行。
         if (elem.querySelector('dd a')) {
             var actived = elem.querySelector('dd.doc-list-actived'),
@@ -1997,7 +1942,7 @@ const Doc = {
     /**
      * 确保列表激活项在滚动可见范围内。
      */
-    scrollActivedItemIntoView: function (elem, alignCenter) {
+    scrollActivedItemIntoView(elem, alignCenter) {
         var actived = elem.querySelector('.doc-list-actived a');
         if (actived) {
             var deltaY = actived.getBoundingClientRect().top - elem.getBoundingClientRect().top,
@@ -2012,7 +1957,7 @@ const Doc = {
     /**
      * 跳转到列表高亮项。
      */
-    gotoActivedItem: function (elem) {
+    gotoActivedItem(elem) {
         if (elem = elem && elem.querySelector('.doc-list-actived a')) {
             location.href = elem.href;
         }
@@ -2021,21 +1966,21 @@ const Doc = {
     /**
      * 跳转到模块列表的高亮项。
      */
-    onSuggestSubmit: function (suggestId) {
+    onSuggestSubmit(suggestId) {
         Doc.gotoActivedItem(document.getElementById(suggestId));
     },
 
     /**
      * 搜索框输入。
      */
-    onSuggestInput: function (suggestId, filter, showHeader) {
+    onSuggestInput(suggestId, filter, showHeader) {
         Doc.updateModuleList(document.getElementById(suggestId), showHeader ? Doc.folder : 'src', filter, showHeader);
     },
 
     /**
      * 搜索框按下。
      */
-    onSuggestKeyPress: function (suggestId, e) {
+    onSuggestKeyPress(suggestId, e) {
         if (e.keyCode === 40 || e.keyCode === 38) {
             e.preventDefault();
             Doc.moveActivedItem(document.getElementById(suggestId), e.keyCode === 40);
@@ -2049,7 +1994,7 @@ const Doc = {
     /**
      * 切换收藏
      */
-    toggleFavorites: function () {
+    toggleFavorites() {
         if (window.localStorage) {
             var button = document.getElementById('doc_module_toolbar_favorite');
             var favorates = Doc.getStore('favorites') || [];
@@ -2072,7 +2017,7 @@ const Doc = {
     /**
      * 绘制页内已加载的所有代码块。
      */
-    renderCodes: function () {
+    renderCodes() {
 
         // 处理所有 <pre>, <script class="doc-demo">, <aside class="doc-demo">
         Doc.iterate('.doc > pre, .doc-api pre, .doc-demo', function (node) {
@@ -2304,7 +2249,7 @@ const Doc = {
     /**
      * 执行页内所有代码。
      */
-    execAllCodes: function () {
+    execAllCodes() {
         Doc.iterate('pre', function (pre) {
             var src = pre.textContent || pre.innerText, result;
             if (!/^</.test(src)) {
@@ -2335,7 +2280,7 @@ const Doc = {
     /**
      * 生成 API 列表。
      */
-    writeApi: function (data, returnHtml) {
+    writeApi(data, returnHtml) {
 
         if (!Doc._apis) {
             Doc._apis = [];
@@ -2404,7 +2349,7 @@ const Doc = {
     /**
      * 展开 API 详情。
      */
-    expandApi: function (dataIndex, apiIndex) {
+    expandApi(dataIndex, apiIndex) {
         var td = document.getElementById('doc_api_' + dataIndex + '_' + apiIndex);
         var api = Doc._apis[dataIndex].apis[apiIndex];
         var result = api.summary || '';
@@ -2479,7 +2424,7 @@ const Doc = {
     /**
      * 折叠 API 详情。
      */
-    collapseApi: function (dataIndex, apiIndex) {
+    collapseApi(dataIndex, apiIndex) {
         var td = document.getElementById('doc_api_' + dataIndex + '_' + apiIndex);
         td.colSpan = 1;
         td.nextSibling.style.display = '';
@@ -2489,7 +2434,7 @@ const Doc = {
     /**
      * 更新当前页面的文档。
      */
-    updateDocs: function () {
+    updateDocs() {
         Doc.callService("updateDocs.njs?path=" + encodeURIComponent(Doc.path), function () {
             location.reload();
         });
@@ -2497,3 +2442,5 @@ const Doc = {
 
 
 };
+
+Doc.initPage();
