@@ -109,7 +109,7 @@
         kbd {
             background-color: @text-color;
             color: contrast(@text-color);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         abbr[title] {
@@ -429,7 +429,7 @@
         text-decoration: none !important;
     }
 
-    a &:first-child {
+    a & {
         margin-right: 4px;
     }
 }
@@ -447,15 +447,15 @@
         text-decoration: none !important;
     }
 
-    ~ .doc-tag {
+    & ~ & {
         margin-left: 1em;
     }
 }
 
 .doc-bookmark {
-    font-size: @font-size;
     display: inline-block;
     vertical-align: middle;
+    font-size: @font-size;
     color: @text-color-light !important;
     opacity: 0;
 
@@ -550,17 +550,16 @@
     &:before {
         &:extend(.doc > section);
         content: "实例";
-        color: rgba(94, 94, 94, .5) !important;
-        font-size: @font-size - 4px !important;
-        line-height: 1 !important;
+        color: rgba(94, 94, 94, .5);
+        font-size: @font-size - 4px;
+        line-height: 1;
         position: absolute;
         top: @margin-x / 2;
         right: @margin-x / 2;
-        cursor: default;
     }
 
     + .doc-code {
-        margin-top: -@margin-y - 1px !important;
+        margin-top: -@margin-y - 1px;
     }
 }
 
@@ -672,7 +671,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        text-indent: 0;
         float: left;
 
         &:before {
@@ -691,33 +689,47 @@
     position: fixed;
     // 解决 Chrome fixed 抖动问题
     -webkit-transform: translateZ(0);
-    width: 0;
     height: 1.5px;
-    background-color: @primary-color-300;
-    opacity: 0.75;
+    background-color: rgba(red(@primary-color-300), green(@primary-color-300), blue(@primary-color-300), .75);
     top: 0;
     left: 0;
     z-index: 9999;
 }
 
-#doc_index {
+#doc_title {
+    border-bottom: 1px solid @border-color;
+}
+
+#doc_module_toolbar {
+    @media @screen-small {
+        display: none;
+    }
+}
+
+#doc_summary {
+    border: 1px solid @border-color-light;
+    background-color: @background-color-header;
+    padding: @margin-x / 2 @margin-x;
+}
+
+#doc_toc {
+    &:extend(.doc > dl);
     background: @background-color-header;
     border-top: 1px solid @border-color-light;
     border-bottom: 1px solid @border-color-light;
-    margin-bottom: @margin-y;
 
     h2 {
         background: @primary-color-400;
-        color: contrast( @primary-color-400);
+        color: contrast(@primary-color-400);
         float: left;
-        font-weight: 500;
         font-size: @font-size + 2px;
+        font-weight: @font-weight-bold;
         margin: @margin-y / 2 0 @margin-y / 2 @margin-x;
         padding: 4px 7px;
     }
 
     dl {
-        background: #fff;
+        background: @background-color;
         margin: 0 0 0 45px + @margin-x;
         padding: @margin-y / 2 @margin-x;
         border-left: 1px solid @border-color-light;
@@ -747,18 +759,12 @@
             content: counter(doc-dt) "." counter(doc-dd) " ";
             font-size: @font-size - 1px;
         }
-    }
 
-        dd a {
+        a {
             color: @text-color;
             font-size: @font-size - 1px;
         }
-}
-
-#doc_summary {
-    border: 1px solid @border-color-light;
-    background-color: @background-color-header;
-    padding: @margin-x / 2 @margin-x;
+    }
 }
 
 body.doc-page {
@@ -795,53 +801,19 @@ body.doc-page {
         .doc-container {
             margin: 0 -@margin-x;
         }
-
-        .doc-sidebar-actived {
-            padding-left: 1px;
-            left: 0 !important;
-        }
-
-        .doc-sidebar-actived, .doc-sidebar-inactived {
-            transition: left @duration-large ease-out;
-        }
-
-        #doc_mask {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            z-index: 10001;
-            opacity: 0;
-            transition: opacity @duration-large ease-out;
-        }
-
-        .doc-sidebar-actived + #doc_mask {
-            background: #000;
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            opacity: .15;
-        }
     }
 }
 
 #doc_topbar {
     background-color: @primary-color-700;
+    font-size: 14px;
 
     a {
         color: @primary-color-50;
         display: block;
-        padding: 8px 10px;
+        padding: 7px 10px;
         text-decoration: none;
     }
-
-        a:hover, .doc-actived a {
-            background-color: @primary-color-900;
-            color: contrast(@primary-color-900);
-        }
 }
 
 #doc_logo, #doc_navbar li {
@@ -853,14 +825,14 @@ body.doc-page {
     background: url('images/logo.png?__inline') no-repeat 0 40% !important;
     padding-left: 26px !important;
 
-    &:hover {
-        background-color: transparent;
-    }
-
     small {
         color: inherit;
         position: relative;
-        top: -.5em;
+        top: -5px;
+    }
+
+    &:hover {
+        color: lighten(@primary-color-50, 50%);
     }
 }
 
@@ -868,6 +840,11 @@ body.doc-page {
     margin: 0;
     padding: 0;
     list-style: none;
+
+    a:hover, .doc-navbar-actived a {
+        background-color: @primary-color-900;
+        color: lighten(@primary-color-50, 50%);
+    }
 
     @media @screen-small {
         margin: 0 -@margin-x;
@@ -884,6 +861,7 @@ body.doc-page {
 
 #doc_menu {
     display: none;
+    float: right;
 
     @media @screen-small {
         display: block;
@@ -893,15 +871,15 @@ body.doc-page {
             -webkit-appearance: button;
             border: 0;
             background: none;
-            width: 40px;
-            color: #fff;
+            color: @primary-color-50;
             padding: 0;
-            height: 36px;
-            cursor: pointer;
             outline: 0;
-            font-size: 18px;
-            line-height: 36px;
             border-radius: 0;
+            line-height: 35px;
+            width: 40px;
+            height: 34px;
+            cursor: pointer;
+            font-size: 18px;
         }
 
             button:active, .doc-menu-actived {
@@ -910,13 +888,8 @@ body.doc-page {
     }
 }
 
-@media @screen-small {
-    #doc_search, #doc_module_toolbar {
-        display: none;
-    }
-}
-
 #doc_search {
+    &:extend(#doc_module_toolbar);
     position: relative;
     margin: 4px 0 0;
 
@@ -960,14 +933,13 @@ body.doc-page {
 
     &_suggest {
         width: 200px;
-        max-height: @font-size * 20;
+        max-height: 276px;
         position: absolute;
         right: 0;
         z-index: 10;
         border: 1px solid @border-color;
         box-shadow: 1px 1px 2px #ccc;
         border-radius: 4px;
-        overflow: auto;
 
         li:first-child {
             border-radius: 4px 0 0 4px;
@@ -995,26 +967,19 @@ body.doc-page {
 #doc_header {
     background-color: @primary-color-500;
     background-image: linear-gradient(@primary-color-600, @primary-color-500);
-    color: #f9f9f9;
     padding-bottom: @margin-y * 2.5;
     margin-bottom: @margin-y;
 
-    h1 {
-        color: inherit;
-        font-size: @font-size + 28px;
+    h1, p {
+        color: @primary-color-50;
         margin: 0;
+        font-size: @font-size + 2px;
+    }
+
+    h1 {
+        font-size: @font-size + 28px;
         padding: @margin-y 0;
     }
-
-    p {
-        color: @primary-color-50;
-        font-size: @font-size + 2px;
-        margin: 0;
-    }
-}
-
-#doc_title {
-    border-bottom: 1px solid @border-color;
 }
 
 #doc_sidebar {
@@ -1069,26 +1034,48 @@ body.doc-page {
     }
 }
 
+.doc-sidebar-actived, .doc-sidebar-inactived {
+    transition: left @duration-large ease-out;
+}
+
+.doc-sidebar-actived {
+    @media @screen-small {
+        padding-left: 1px;
+        left: 0 !important;
+    }
+}
+
+#doc_mask {
+    @media @screen-small {
+        user-select: none;
+        -webkit-user-drag: none;
+        z-index: 10001;
+        opacity: 0;
+        transition: opacity @duration-large ease-out;
+
+        .doc-sidebar-actived + & {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #000;
+            opacity: .15;
+        }
+    }
+}
+
 .doc-tree {
     background: @background-color;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
 
-    &, ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        overflow: hidden;
-    }
-
-    .doc-icon {
-        transition: transform @duration;
-    }
-
-    &-collapsed {
-        .doc-icon {
-            transform: rotate(-90deg);
-        }
+    ul {
+        transition: height @duration;
+        padding: 0 0 0 @font-size;
     }
 
     a {
@@ -1097,61 +1084,40 @@ body.doc-page {
         white-space: nowrap;
         overflow: hidden;
         text-decoration: none;
-        color: #626262 !important;
-        line-height: 240%;
-        font-size: 13.5px;
-        padding-left: .18em;
-    }
+        color: @text-color !important;
+        line-height: 2.4;
+        font-size: @font-size - 1px;
+        padding-left: 4px;
 
-        a:hover, &-actived a {
-            background-color: #E8E8E8 !important;
+        &:hover {
+            background-color: @background-color-header;
             text-decoration: none;
         }
+    }
 
-    ul {
-        transition: height .3s;
-        @indent-width: 14px;
+    &-selected a {
+        background-color: #e8e8e8 !important;
+    }
 
-        a {
-            padding-left: @indent-width * 1;
-        }
+    &-hidden a {
+        color: @text-color-light !important;
+        font-style: italic;
+    }
 
-        ul {
-            a {
-                padding-left: @indent-width * 2;
-            }
+    .doc-icon {
+        transition: transform @duration;
 
-            ul {
-                a {
-                    padding-left: @indent-width * 3;
-                }
-
-                ul {
-                    a {
-                        padding-left: @indent-width * 4;
-                    }
-
-                    ul {
-                        a {
-                            padding-left: @indent-width * 5;
-                        }
-                    }
-                }
-            }
+        .doc-tree-collapsed & {
+            transform: rotate(-90deg);
         }
     }
 
     small {
-        margin-left: .65em;
+        margin-left: 7px;
     }
 
     mark {
         background-color: yellow;
-    }
-
-    &-doing a, &-todo a {
-        color: #AAA !important;
-        font-style: italic;
     }
 }
 
